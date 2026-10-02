@@ -99,7 +99,7 @@ Commission à l'usage, inscription gratuite :
 
 Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspondre à la réalité.
 1. Grille de frais : taux de 10 % et 3 % fixés par le porteur du projet ; **seuils et taux intermédiaires (8 / 6 / 4 %) proposés, à valider**. Vérifier aussi que 3 % couvre les frais du prestataire Mobile Money. Comparer avec la concurrence (chiffres Tikerama : 10 % billets, 5 % cotisations — non vérifiés).
-2. Règles de fonds (§10) : fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé. **À trancher :** cas d'une cagnotte qui n'atteint pas son objectif, dépassement de l'objectif, plafond et justificatifs du retrait anticipé, date du versement différé en billetterie.
+2. Règles de fonds (§10) : fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé. **À trancher :** dépassement de l'objectif, plafond et justificatifs du retrait anticipé, date du versement différé en billetterie.
 3. Délai de retrait annoncé et vérification d'identité des organisateurs.
 4. Liste des moyens de paiement réellement disponibles par pays.
 5. Pays de lancement (Bénin d'abord ?).
@@ -107,7 +107,7 @@ Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspo
 $1
 8. **Prestataire de paiement agréé par pays** et cadre réglementaire BCEAO / UMOA : à vérifier (§17). Les éléments du document source n'ont pas été vérifiés.
 9. **Réécrire les textes publics** (FAQ « objectif non atteint » et « retirer mes fonds », `/securite`, `/comment-ca-marche`) : ils décrivent aujourd'hui un retrait libre, incompatible avec les fonds réservés du §10.
-10. **Qui supporte les frais** : commission déduite de l'organisateur (grille actuelle) ou frais ajoutés à l'acheteur (exemple du document) ? (§16)
+10. **Tranché :** la commission est déduite des recettes de l'organisateur (§16). **Reste à préciser :** qui supporte les frais du prestataire Mobile Money, et **la nature de la « carte »** que l'organisateur doit enregistrer (pièce d'identité, carte bancaire, carte Mobile Money ?).
 11. Arbitrer le **message d'accueil** (« Les moments commencent ici. » ou « Rassemble. Célèbre. Soutiens. ») et la **direction visuelle** (§16).
 
 ## 8. Décisions prises
@@ -129,6 +129,9 @@ $1
 | 2026-10-02 | ✅ **Pas de portefeuille Rallyo** : fonds versés via un prestataire de paiement agréé |
 | 2026-10-02 | ✅ Cagnotte : fonds réservés jusqu'à la fin ou à l'objectif, **retrait anticipé sur demande avec contrôle** ; billetterie : versement **différé ou direct** |
 | 2026-10-02 | ✅ Page publique transparente : objectif, montant, nombre de contributions ou de billets, dates, statut |
+| 2026-10-02 | ✅ **Frais supportés par l'organisateur** (commission déduite de ses recettes) |
+| 2026-10-02 | ✅ **Cagnotte sous l'objectif à la date de fin : le créateur garde tout ce qui a été collecté** |
+| 2026-10-02 | 🟡 **Organisateur d'évènement : toute personne avec un compte**, qui enregistre ses informations et « une carte comme sur Paykko » (nature à préciser) |
 
 
 ---
@@ -145,7 +148,8 @@ $1
 - ✅ Plateforme **web responsive** (ordinateur, tablette, mobile). ⚠️ Le code actuel est une PWA dans un cadre de téléphone : voir §18.
 - ✅ **Transparence publique** : chaque évènement et chaque cagnotte a une page publique avec objectif, montant collecté ou encaissé, nombre de contributions ou de billets vendus, dates et statut.
 - ✅ **Achat et contribution sans compte.** Compte obligatoire pour créer, gérer, demander un retrait, consulter son historique et publier des mises à jour.
-- ✅ Paiement par **Mobile Money et cartes bancaires** (moyens disponibles selon le pays et le prestataire).
+$1
+- ✅ **Frais : l'organisateur les supporte** (décision du 2026-10-02) : la commission Rallyo est **déduite de ses recettes**, jamais ajoutée au prix payé par l'acheteur ou le contributeur. ❓ Reste à préciser qui supporte les frais du prestataire Mobile Money.
 - ✅ **Pas de portefeuille Rallyo** : les fonds sont versés au bénéficiaire via un **prestataire de paiement agréé** (§10.1, §17).
 - 🟡 Direction visuelle **festive et colorée** (message d'accueil « Les moments commencent ici. », visuel très festif) : à confirmer (§16).
 
@@ -193,7 +197,7 @@ RALLYO
 - ✅ Le bénéficiaire reçoit les fonds via le prestataire de paiement.
 - 🟡 **Condition de clôture** (choisie à la création) : à la date de fin · lorsque l'objectif est atteint · **à la date de fin ou à l'objectif atteint (recommandé)**.
 - ❓ Une cagnotte peut-elle **dépasser son objectif** ? Si oui, prévoir l'état « Objectif atteint, contributions toujours ouvertes ».
-- ❓ Que devient une cagnotte **qui n'atteint pas son objectif** à la date de fin ? (point 2 du §7)
+- ✅ **Cagnotte qui n'atteint pas son objectif à la date de fin : le créateur garde tout ce qui a été collecté** (décision du 2026-10-02), sous réserve des règles de versement et de contrôle (§10.4).
 
 ### 10.3 Billetterie
 ✅ Deux modes proposés à l'organisateur :
@@ -289,7 +293,7 @@ Recherche + filtres (pays, ville, date, catégorie, prix, gratuit/payant, dispon
 Grande image, titre, catégorie, organisateur, partager, favoris. Date et heure, lieu, **billets vendus / places disponibles / % vendu**, description. **Catégories de billets** (ex. Pass Standard 5 000 · VIP 15 000 · Premium 30 000, avec « N restants »). Dates de la vente (ouverture, fin). Profil public de l'organisateur. Bouton **Acheter un billet**.
 
 ### 13.4 Achat d'un billet (5 étapes, parcours très court)
-1 **Billet** (quantité par catégorie, ± ) · 2 **Informations** (nom, prénom, téléphone, e-mail, selon l'évènement ; achat sans compte autorisé) · 3 **Récapitulatif** (ex. 2 × Standard 10 000 F, frais 500 F, **total 10 500 F**) · 4 **Paiement** (Mobile Money : MTN, Moov, autres selon pays ; carte Visa / Mastercard) · 5 **Confirmation** (voir, télécharger, recevoir par e-mail).
+1 **Billet** (quantité par catégorie, ± ) · 2 **Informations** (nom, prénom, téléphone, e-mail, selon l'évènement ; achat sans compte autorisé) · 3 **Récapitulatif** (ex. 2 × Standard 10 000 F, **total 10 000 F** : la commission Rallyo est déduite des recettes de l'organisateur, elle n'est pas ajoutée à l'acheteur ; l'exemple du document source, « frais 500 F, total 10 500 F », est écarté) · 4 **Paiement** (Mobile Money : MTN, Moov, autres selon pays ; carte Visa / Mastercard) · 5 **Confirmation** (voir, télécharger, recevoir par e-mail).
 
 ### 13.5 Le billet
 Marque Rallyo, évènement, **QR code**, titulaire, catégorie, date, ville, référence `RLY-XXXXXX`. Actions : télécharger, ajouter au calendrier, partager, voir l'évènement.
@@ -352,7 +356,7 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | 1 | Plateformes | **Site web responsive** (le document parle de « plateforme web »). Une appli mobile native n'est pas retenue. | ✅ |
 | 2 | Pays au lancement | Non tranché. Le **Bénin** est le seul marché cité pour les prestataires (§17) ; devise FCFA. | ❓ |
 | 3 | Types de cagnottes | Les catégories prévues couvrent **personnelles et collectes publiques** (Anniversaire, Mariage, Projet, Solidarité, Association, Urgence, Études, Autre). | 🟡 |
-| 4 | Qui peut organiser un évènement | Non tranché. L'état « En attente de validation » (§10.7) suppose une **validation avant publication**. | ❓ |
+| 4 | Qui peut organiser un évènement | **Toute personne avec un compte.** Dans tous les cas, l'organisateur **enregistre ses informations et une carte « comme sur Paykko »** (plateforme non identifiée ; **nature de la carte à préciser**). L'état « En attente de validation » (§10.7) reste à confirmer. | 🟡 |
 | 5 | Moyens de paiement | **Mobile Money et cartes bancaires.** | ✅ |
 | 6 | Réception des fonds | **Versement via le prestataire**, pas de portefeuille Rallyo. Versement direct ou différé selon l'opération. | ✅ |
 | 7 | Compte requis | **Sans compte pour acheter ou contribuer ; compte pour créer et gérer.** | ✅ |
@@ -360,10 +364,10 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 
 **Autres décisions ouvertes issues du document :**
 - ❓ Une cagnotte peut-elle dépasser son objectif ? (§10.2)
-- ❓ Que devient une cagnotte qui n'atteint pas son objectif ? (§10.2, §7)
+- ✅ **Cagnotte qui n'atteint pas son objectif à la date de fin : le créateur garde tout ce qui a été collecté** (décision du 2026-10-02), sous réserve des règles de versement et de contrôle (§10.4).
 - ❓ Quand et à quelles conditions les recettes d'un évènement sont-elles versées en mode différé ? (§10.3)
 - ❓ Plafond et justificatifs du retrait anticipé ; vérification d'identité. (§10.4)
-- ❓ **Qui supporte les frais ?** L'exemple d'achat montre « Frais 500 F » **ajoutés au total payé par l'acheteur**, alors que la grille actuelle (`src/lib/fees.ts`, §6) est une commission **déduite de ce que reçoit l'organisateur**. À trancher : organisateur, acheteur, ou partage.
+- ✅ **Frais : l'organisateur les supporte** (décision du 2026-10-02) : la commission Rallyo est **déduite de ses recettes**, jamais ajoutée au prix payé par l'acheteur ou le contributeur. ❓ Reste à préciser qui supporte les frais du prestataire Mobile Money.
 - ❓ Politique de remboursement (page du pied de page).
 - ❓ Message d'accueil : « Les moments commencent ici. » ou « Rassemble. Célèbre. Soutiens. ».
 
@@ -393,5 +397,5 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | **Back-office** | Aucun | 18 écrans (utilisateurs, paiements, retraits, signalements, modération) | Module d'administration protégé |
 | **Écrans** | 9 routes (accueil, explorer, créer, billets, profil, 2 détails, paiement, connexion) | 119 écrans et sous-écrans (§12) | Découpage en lots, voir le journal |
 | **Textes publics** | FAQ « Que se passe-t-il si l'objectif n'est pas atteint ? » et « Comment retirer mes fonds ? » décrivent un retrait libre | Fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé | **Réécrire la FAQ, `/securite` et `/comment-ca-marche`** une fois les règles du §10 validées |
-| **Frais** | Commission déduite de l'organisateur | Exemple d'achat avec frais ajoutés à l'acheteur | Décision §16 puis adaptation de `fees.ts` et des écrans de paiement |
+| **Frais** | Commission déduite de l'organisateur | Exemple d'achat avec frais ajoutés à l'acheteur | **Tranché : on garde la commission déduite de l'organisateur.** Exemple du document écarté (§13.4). Aucun changement de `fees.ts` |
 | **Slogan / hero** | « Rassemble. Célèbre. Soutiens. » | « Les moments commencent ici. » (proposé) | Arbitrage §16 |

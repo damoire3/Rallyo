@@ -56,7 +56,7 @@
 
 ### ⏳ À faire — Spécifications V1 (cahier des charges §9 à 18)
 Ordre **proposé** :
-1. **Valider les décisions ouvertes** (§16) : pays, qui organise, dépassement de l'objectif, objectif non atteint, versement différé, plafond du retrait anticipé, **qui supporte les frais**, slogan. *Bloquant pour la suite.*
+1. **Valider les décisions ouvertes** (§16) : pays, **nature de la « carte » de l'organisateur**, dépassement de l'objectif, versement différé, plafond du retrait anticipé, frais du prestataire Mobile Money, slogan. *(Tranchés le 2026-10-02 : qui supporte les frais, objectif non atteint, qui organise.)*
 2. **Choisir le prestataire de paiement** et vérifier le cadre BCEAO / UMOA (§17).
 3. **Refonte du layout `/app` en web responsive** (1440 / 768 / 390 px) ; le cadre téléphone ne reste que pour la démo de la landing.
 4. **Évolution du schéma Supabase** (migration `0005`+) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur.
@@ -72,7 +72,7 @@ Ordre **proposé** :
 ### ⚠️ Points d'attention
 - **Textes publics en décalage :** la FAQ, `/securite` et `/comment-ca-marche` décrivent un retrait libre des fonds, incompatible avec le modèle « fonds réservés + retrait anticipé contrôlé » (§10). À réécrire après validation des règles.
 - **Format :** le cahier demande un site web responsive ; le code actuel est une PWA dans un cadre de téléphone (§18).
-- **Frais :** grille actuelle = commission déduite de l'organisateur ; l'exemple du document ajoute des frais à l'acheteur. À trancher (§16).
+- **Frais :** décision prise (commission déduite de l'organisateur) : aucun changement de code. Reste à préciser qui supporte les frais du prestataire Mobile Money.
 - Les éléments **réglementaires (BCEAO) et concurrentiels** cités dans le document source n'ont **pas été vérifiés** (§17).
 - Un lien vers un id inexistant (ou une cagnotte non publique) donne bien une 404 ; sans Supabase configuré, seuls les ids de démo (`c1`, `e1`…) fonctionnent
 - `NODE_ENV=production` est défini sur la machine : à supprimer dans les variables d'environnement Windows
@@ -83,6 +83,17 @@ Ordre **proposé** :
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Trois décisions enregistrées
+| Question | Décision |
+|---|---|
+| Qui supporte les frais ? | ✅ **L'organisateur** : commission déduite de ses recettes. Aucun changement de `fees.ts`. L'exemple d'achat du document source (frais ajoutés à l'acheteur) est écarté. |
+| Cagnotte qui n'atteint pas son objectif | ✅ **Le créateur garde tout ce qui a été collecté.** Le texte actuel de la FAQ va déjà dans ce sens. |
+| Qui peut organiser un évènement | 🟡 **Toute personne avec un compte**, qui enregistre ses informations et « une carte comme sur Paykko ». |
+
+**Point bloquant :** « une carte comme sur Paykko » n'est pas clair. Recherche web : **Paykko n'a pas été identifié** (aucun résultat pertinent). La nature de la carte (pièce d'identité, carte bancaire, carte Mobile Money) change le parcours et les obligations de vérification : question posée au porteur.
+
+Mis à jour dans le cahier : §7 (points 2 et 10), §9.1, §10.2, §13.4, §16, §18, §8. Aucun code modifié.
 
 ### 2026-10-02 — Spécifications V1 intégrées au cahier des charges
 **Demande :** ajouter au cahier des charges les documents « Architecture complète de l'application » et « Rallyo — architecture définitive V1 ».
