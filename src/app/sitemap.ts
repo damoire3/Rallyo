@@ -10,7 +10,7 @@ export const revalidate = 3600;
 type Entry = { kind: "campaign" | "event"; id: string; created_at: string };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const pages = ["", "/comment-ca-marche", "/pourquoi-rallyo", "/tarifs", "/securite", "/faq"].map((p) => ({
+  const pages = ["", "/comment-ca-marche", "/pourquoi-rallyo", "/tarifs", "/securite", "/faq", "/contact"].map((p) => ({
     url: `${base}${p}`,
     changeFrequency: "monthly" as const,
     priority: p === "" ? 1 : 0.8,

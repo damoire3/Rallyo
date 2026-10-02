@@ -17,12 +17,21 @@ export function FaqItems({ items }: { items: FaqItem[] }) {
   );
 }
 
+const faqId = (category: string) =>
+  "faq-" +
+  category
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
 export function FaqGroups({ groups }: { groups: FaqGroup[] }) {
   return (
     <>
       {groups.map((g) => (
-        <section className="faq-group" key={g.category} aria-labelledby={`faq-${g.category}`}>
-          <h2 id={`faq-${g.category}`}>{g.category}</h2>
+        <section className="faq-group" key={g.category} aria-labelledby={faqId(g.category)}>
+          <h2 id={faqId(g.category)}>{g.category}</h2>
           <FaqItems items={g.items} />
         </section>
       ))}

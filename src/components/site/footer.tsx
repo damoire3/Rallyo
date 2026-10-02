@@ -20,8 +20,12 @@ const COLS = [
   },
   {
     title: "Confiance",
+    links: [{ href: "/securite", label: "Sécurité et paiements" }],
+  },
+  {
+    title: "Aide",
     links: [
-      { href: "/securite", label: "Sécurité et paiements" },
+      { href: "/contact", label: "Contact et aide" },
       { href: "/faq", label: "Questions fréquentes" },
     ],
   },

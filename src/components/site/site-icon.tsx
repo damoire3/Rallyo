@@ -1,5 +1,12 @@
 import {
   BadgeCheck,
+  Clock,
+  CreditCard,
+  HandCoins,
+  Mail,
+  MessageCircle,
+  Phone,
+  ShieldAlert,
   ChartColumn,
   EyeOff,
   Flag,
@@ -39,6 +46,13 @@ const ICONS: Record<string, LucideIcon> = {
   receipt: ReceiptText,
   "trend-down": TrendingDown,
   globe: Globe,
+  "hand-coins": HandCoins,
+  "credit-card": CreditCard,
+  mail: Mail,
+  message: MessageCircle,
+  phone: Phone,
+  clock: Clock,
+  "shield-alert": ShieldAlert,
 };
 
 export function SiteIcon({ name, size = 26 }: { name: string; size?: number }) {

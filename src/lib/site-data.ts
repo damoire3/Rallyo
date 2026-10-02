@@ -49,6 +49,7 @@ export const NAV_LINKS = [
   { href: "/tarifs", label: "Tarifs" },
   { href: "/securite", label: "Sécurité" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Aide" },
 ];
 
 export const MARQUEE = [

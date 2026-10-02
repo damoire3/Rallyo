@@ -59,6 +59,12 @@ Section sous l'eyebrow « // L'énergie qu'on veut servir ». Défilé horizonta
 - **Fraîcheur :** page régénérée toutes les 60 s (`revalidate = 60`).
 - **Accessibilité :** défilé en pause au survol / focus, 2e série masquée aux lecteurs d'écran, défilement manuel si « réduire les animations ».
 
+#### 3.2.3 Page Contact et aide (spécification, 2026-10-02)
+`/contact` (lien « Aide » dans le menu et le pied de page) : 6 cartes d'aide vers la FAQ, questions les plus posées, canaux de contact, formulaire, conseils de prudence et signalement.
+- **Coordonnées :** jamais écrites en dur ; variables `NEXT_PUBLIC_CONTACT_EMAIL / WHATSAPP / PHONE / HOURS`, canal masqué si vide.
+- **Formulaire :** `POST /api/contact` ; anti-robots (champ piège, délai minimal), limite de 5 messages par 10 minutes et par IP, validation partagée client/serveur ; stockage dans `contact_messages` (migration `0005`), **insertion seule** pour le public, lecture réservée à l'équipe.
+- **Reste à définir :** délai de réponse annoncé, outil de traitement et alerte à l'équipe, durée de conservation des messages (données personnelles).
+
 ### 3.3 Hors périmètre (pour l'instant)
 Application native, multi-devises, **remboursements automatiques** (la *demande* de remboursement suivie manuellement est dans le périmètre, §10.6), **portefeuille interne Rallyo** (§10.1), programme d'affiliation.
 

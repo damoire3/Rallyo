@@ -1,6 +1,6 @@
 # Rallyo — Journal de bord
 
-> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après intégration des spécifications V1)
+> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après page Contact et aide)
 > Légende : ✅ fait · 🔄 en cours · ⏳ à faire · ⚠️ point d'attention
 
 **Projet :** `C:\Users\HP\Desktop\Arbre\Mes saas\rallyo-next` — voir `CAHIER_DES_CHARGES.md`
@@ -11,11 +11,11 @@
 ## 1. Tableau de bord
 
 ### 🔄 En cours
-- **Contrôle visuel** et **build** de l'ensemble (icônes Lucide + grille de frais) : à faire. Les icônes Lucide (site-icon, icon.tsx, home-sections, securite, pourquoi-rallyo, site.css) sont faites mais **non commitées**.
-- **Contrôle visuel** (desktop + mobile) du hero v2 et de la galerie, avec `npm run dev` — personne ne l'a encore fait dans un navigateur.
+- **Contrôle visuel** (desktop + mobile) de l'ensemble de la landing : hero v2, galerie, icônes Lucide, simulateur de frais, page Contact — avec `npm run dev`. Personne ne l'a encore fait dans un navigateur (les vérifications faites jusqu'ici sont `tsc`, `build` et des requêtes HTTP).
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
 
 ### ✅ Fait
+- **✅ TERMINÉ — Page « Contact et aide »** (`/contact`) : 3 cartes d'aide, formulaire, canaux de contact, bloc sécurité ; route `POST /api/contact` ; menu « Aide » et colonne « Aide » du pied de page ; migration `0005_contact.sql` (voir entrée du 2026-10-02 « Page Contact et aide »)
 - Détails cagnotte / évènement / paiement branchés sur Supabase (démo d'abord, UUID ensuite) — `repo.ts`, migration `0003`
 - Hero v2 (pop-ups à droite) + galerie « Ça se passe chez nous » : cartes-billets branchées au back, 13 max, popularité, repli photos — migration `0002`
 - Dossier projet créé, Next.js 15.5.26 + React 19.1.0 + Tailwind 4 + TypeScript 5.8 installés
@@ -51,7 +51,8 @@
 - Remplacer les images Unsplash
 - Déploiement (Vercel ou autre) + nom de domaine
 - Passer sur Node 22 LTS
-- Appliquer `0002_showcase.sql`, `0003_public_detail.sql` **et** `0004_sitemap.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
+- Appliquer `0002_showcase.sql`, `0003_public_detail.sql`, `0004_sitemap.sql` **et `0005_contact.sql`** sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
+- Page Contact : renseigner `NEXT_PUBLIC_CONTACT_EMAIL`, `..._WHATSAPP`, `..._PHONE`, `..._HOURS` (vides = canal masqué) ; prévoir **où lire les messages** (aujourd'hui : tableau de bord Supabase uniquement) et une alerte à l'équipe
 - Paiement : la page lit désormais les vraies données, mais le paiement lui-même reste simulé (agrégateur à choisir)
 
 ### ⏳ À faire — Spécifications V1 (cahier des charges §9 à 18)
@@ -59,7 +60,7 @@ Ordre **proposé** :
 1. **Valider les décisions ouvertes** (§16) : pays, dépassement de l'objectif, versement différé, plafond du retrait anticipé, frais du prestataire Mobile Money, slogan. *(Tranchés le 2026-10-02 : qui supporte les frais, objectif non atteint, qui organise.)*
 2. **Choisir le prestataire de paiement** et vérifier le cadre BCEAO / UMOA (§17).
 3. **Refonte du layout `/app` en web responsive** (1440 / 768 / 390 px) ; le cadre téléphone ne reste que pour la démo de la landing.
-4. **Évolution du schéma Supabase** (migration `0005`+) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur ; **vérification d'identité et moyen de réception de l'organisateur** (`organizer_verifications`, `payout_accounts`).
+4. **Évolution du schéma Supabase** (migration `0006`+, la `0005` étant prise par le contact) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur ; **vérification d'identité et moyen de réception de l'organisateur** (`organizer_verifications`, `payout_accounts`).
 5. **Parcours A** : achat sans compte, catégories de billets, billet par lien, QR vérifié côté serveur.
 6. **Parcours B** : assistant de création en 5 étapes, gestion de cagnotte (5 onglets), retrait anticipé et suivi, écran « objectif atteint ».
 7. **Parcours C** : espace organisateur, statistiques, contrôle des entrées.
@@ -72,7 +73,7 @@ Ordre **proposé** :
 ### ⚠️ Points d'attention
 - **Textes publics en décalage :** la FAQ, `/securite` et `/comment-ca-marche` décrivent un retrait libre des fonds, incompatible avec le modèle « fonds réservés + retrait anticipé contrôlé » (§10). À réécrire après validation des règles.
 - **Format :** le cahier demande un site web responsive ; le code actuel est une PWA dans un cadre de téléphone (§18).
-$1
+- **Grille de frais à confirmer :** le code applique **10 % → 3 %** (entrée « Grille de frais dégressive »), alors que le porteur a ensuite évoqué **9 % → 3 %**. Une seule valeur à changer dans `src/lib/fees.ts` une fois tranché. Les tarifs du marché (Tikerama : 10 % billets, 5 % cotisations ; Tikehub : 5 %) ont été vérifiés sur leurs sites officiels le 2026-10-02 ; **Ticketmania** (Côte d'Ivoire) n'a pas pu être trouvé.
 - **Pièces d'identité des organisateurs :** données sensibles (§10.9). Stockage privé, accès restreint, durée de conservation et cadre légal à définir **avant** de collecter la moindre pièce.
 - Les éléments **réglementaires (BCEAO) et concurrentiels** cités dans le document source n'ont **pas été vérifiés** (§17).
 - Un lien vers un id inexistant (ou une cagnotte non publique) donne bien une 404 ; sans Supabase configuré, seuls les ids de démo (`c1`, `e1`…) fonctionnent
@@ -84,6 +85,38 @@ $1
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Page « Contact et aide » ✅ TERMINÉ
+**Demande :** reprendre le travail commencé par l'autre IA (page contact avec aide) et le terminer. **Début notifié** avant d'agir, **fin notifiée** ici (nouvelle règle de l'équipe : on prévient avant, on prévient après).
+
+**État trouvé :** 5 fichiers créés mais ni câblés, ni testés, ni commités, plus un script `_wire.mjs` jamais exécuté, et rien dans le journal.
+
+**Ce que fait la page** (`/contact`)
+- En-tête « On est là, écris-nous » avec boutons « Nous écrire » et « Voir la FAQ ».
+- **6 cartes d'aide** : Cagnottes, Billetterie, Paiements et frais, Sécurité et compte (vers les rubriques de la FAQ, ancres vérifiées dans le HTML généré), Comment ça marche, Signaler un contenu.
+- **« Les plus posées »** : questions tirées de la FAQ existante (`HELP_QUESTIONS`), affichées en accordéon.
+- **Nous écrire** : canaux de contact + formulaire (nom, e-mail ou téléphone, sujet, message de 10 à 2 000 caractères, compteur, erreurs par champ). `?sujet=signalement` pré-sélectionne le sujet.
+- **Bloc « Reste prudent »** : ne jamais communiquer mot de passe, code SMS ou code secret Mobile Money ; lien pour signaler une page suspecte.
+- **Canaux masqués tant qu'ils ne sont pas configurés** : e-mail, WhatsApp, téléphone, horaires viennent de variables d'environnement `NEXT_PUBLIC_CONTACT_*` (aucune coordonnée inventée). Sans aucun canal, la page dit que le formulaire est le moyen le plus simple de joindre l'équipe.
+
+**Route `POST /api/contact`** (`src/app/api/contact/route.ts`) — ordre des contrôles : taille (8 000 car.) → JSON → robots (champ piège + formulaire envoyé en moins de 2,5 s : réponse « ok » sans rien enregistrer) → validation (`src/lib/contact.ts`, partagée client/serveur) → limite de 5 messages / 10 min / IP → configuration → enregistrement. Les erreurs internes ne sont jamais détaillées au visiteur.
+
+**Base de données** (`0005_contact.sql`) : table `contact_messages`, RLS activée, **insertion seule** pour le public ; aucune lecture, modification ou suppression possible via l'API publique. Lecture : tableau de bord Supabase ou clé `service_role`.
+
+**Câblage exécuté** (script `_wire.mjs`, puis supprimé) : icônes (`site-icon.tsx`), ancres de la FAQ sans espaces ni accents (`blocks.tsx`, corrige aussi `aria-labelledby` invalide), lien **« Aide »** dans le menu, colonne **« Aide »** du pied de page, `/contact` dans le sitemap, styles en fin de `site.css`, variables dans `.env.example`.
+
+**Bug trouvé et corrigé en route :** le script remplaçait la ligne `FAQ` du menu par un littéral `$1` (le lien FAQ disparaissait et `site-data.ts` ne compilait plus). Lien FAQ rétabli. La même erreur avait laissé un `$1` parasite dans ce journal (corrigé).
+
+**Vérifications**
+- `tsc --noEmit` OK · `npm run build` OK (28 pages, dont `/contact` et `/api/contact`).
+- Test réel sur serveur de production local : pages `/contact`, `/faq`, `/` → 200, menu « Aide » présent, `/contact` dans `sitemap.xml` ; API : JSON invalide 400, robot (champ piège) et formulaire trop rapide → `ok` sans enregistrement, message court / sujet inconnu / contact invalide → 400 avec message par champ, corps trop gros 413, **6ᵉ message en rafale → 429**, message valide sans Supabase configuré → 503 (le formulaire affiche alors « pas encore disponible, utilise les autres moyens »).
+- **Non testé :** enregistrement réel (pas de projet Supabase) et rendu visuel (aucun navigateur utilisé).
+
+**À savoir**
+- Les messages ne sont lisibles que dans le tableau de bord Supabase : prévoir une vue d'équipe et une alerte (e-mail / WhatsApp) pour ne pas laisser des demandes sans réponse.
+- Limite de débit **en mémoire** : suffisante contre un abus simple, pas contre une attaque distribuée ni sur plusieurs instances serveur.
+- Migration : la spec V1 (§18) prévoyait `0005`+ pour le nouveau schéma ; elle passe en `0006`+.
+- Aucun texte de FAQ réécrit ici (voir point d'attention « textes publics en décalage »).
 
 ### 2026-10-02 — « Une carte comme sur Paykko » : précisé
 **Réponse :** les deux : **identité** et **moyen de recevoir l'argent**.
