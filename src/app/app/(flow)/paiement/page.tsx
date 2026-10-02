@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PaymentView } from "@/components/views/payment-view";
-import { getCagnotte, getEvent } from "@/lib/data";
+import { getCagnotteAny, getEventAny } from "@/lib/repo";
 
 export const metadata: Metadata = { title: "Paiement", robots: { index: false } };
 
@@ -15,13 +15,13 @@ export default async function PaymentPage({ searchParams }: { searchParams: Sear
   const id = first(sp.id) ?? "";
 
   if (type === "event") {
-    const e = getEvent(id);
+    const e = await getEventAny(id);
     if (!e) notFound();
     return <PaymentView kind="event" title={e.title} amount={e.price} anonymous={false} />;
   }
 
   if (type === "cagnotte") {
-    const c = getCagnotte(id);
+    const c = await getCagnotteAny(id);
     if (!c) notFound();
     // Montant choisi par l'utilisateur : entier entre 100 et 5 000 000 FCFA, sinon 5 000 par défaut.
     const requested = Number(first(sp.amount));

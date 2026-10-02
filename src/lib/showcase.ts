@@ -1,5 +1,6 @@
 import { COLORS } from "@/lib/data";
 import { IMAGES } from "@/lib/site-data";
+import { rpc } from "@/lib/supabase-rest";
 
 /**
  * Vitrine de la landing (section « Ça se passe chez nous »).
@@ -49,7 +50,7 @@ const GRADIENTS: [string, string][] = [
   [COLORS.cyan, COLORS.orange],
 ];
 
-const gradientFor = (s: string): [string, string] => {
+export const gradientFor = (s: string): [string, string] => {
   let h = 0;
   for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return GRADIENTS[h % GRADIENTS.length];
@@ -99,8 +100,7 @@ function toItem(r: RpcRow): ShowcaseItem {
     tag: r.category,
     sub: r.subtitle ?? "",
     image: r.cover_url || IMAGES.strip[r.title.length % IMAGES.strip.length],
-    // Les pages de détail de l'appli sont encore branchées sur les données de démo : voir JOURNAL.
-    href: isEvent ? `/app/evenements/${r.id}` : `/app/cagnottes/${r.id}`,
+    href: isEvent ? `/app/evenements/${r.id}` : `/app/cagnottes/${r.id}`, // détails : voir src/lib/repo.ts
     footLabel: isEvent ? "Billet" : "Progression",
     footValue: isEvent ? fcfa(r.ticket_price ?? 0) : `${r.progress_pct ?? 0}%`,
     progress: isEvent ? undefined : (r.progress_pct ?? 0),
@@ -110,23 +110,8 @@ function toItem(r: RpcRow): ShowcaseItem {
 
 /** Appelle le back. Ne lève jamais d'erreur : en cas de souci on renvoie une liste vide (→ photos). */
 async function fetchPopular(): Promise<ShowcaseItem[]> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return [];
-  try {
-    const res = await fetch(`${url}/rest/v1/rpc/showcase_popular`, {
-      method: "POST",
-      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ max_items: MAX_SLIDES }),
-      next: { revalidate: 60 }, // la vitrine se rafraîchit au plus toutes les 60 s
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!res.ok) return [];
-    const rows = (await res.json()) as RpcRow[];
-    return Array.isArray(rows) ? rows.slice(0, MAX_SLIDES).map(toItem) : [];
-  } catch {
-    return [];
-  }
+  const rows = await rpc<RpcRow>("showcase_popular", { max_items: MAX_SLIDES });
+  return rows.slice(0, MAX_SLIDES).map(toItem);
 }
 
 export async function getShowcaseItems(): Promise<{ items: ShowcaseItem[]; live: number }> {

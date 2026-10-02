@@ -3,17 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { CategoryBadge, Dashes, TopBar } from "@/components/ui";
-import { EVENTS, fmt, getEvent } from "@/lib/data";
+import { EVENTS, fmt } from "@/lib/data";
+import { getEventAny } from "@/lib/repo";
 
 type Params = { params: Promise<{ id: string }> };
 
+// Les évènements de démo sont pré-générés ; les vrais (UUID Supabase) sont rendus à la demande.
 export function generateStaticParams() {
   return EVENTS.map((e) => ({ id: e.id }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
-  const e = getEvent(id);
+  const e = await getEventAny(id);
   if (!e) return { title: "Évènement introuvable" };
   const description = `${e.date} · ${e.time} · ${e.place} — billet à ${fmt(e.price)}`;
   return {
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function EventDetailPage({ params }: Params) {
   const { id } = await params;
-  const e = getEvent(id);
+  const e = await getEventAny(id);
   if (!e) notFound();
 
   return (

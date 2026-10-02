@@ -111,3 +111,4 @@ Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspo
 | 2026-10-02 | Section « Tarifs » publique (l'ancienne était un tableau interne de pistes) |
 | 2026-10-02 | Hero repris de `rallyo-pw@` (texte + pop-ups à droite) ; vitrine « Ça se passe chez nous » = cartes-billets branchées au back, 13 max, tri par popularité, repli sur photos |
 | 2026-10-02 | Popularité calculée **côté base** (fonction SQL `SECURITY DEFINER`, agrégats uniquement) : les billets restent illisibles publiquement |
+| 2026-10-02 | Pages de détail et paiement : données de démo d'abord (`c1`, `e1`…), puis Supabase pour les UUID, via `src/lib/repo.ts` (mêmes types, vues inchangées) ; lecture publique par fonctions SQL `campaign_public` / `event_public` (migration `0003`) |

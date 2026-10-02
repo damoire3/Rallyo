@@ -11,10 +11,12 @@
 ## 1. Tableau de bord
 
 ### 🔄 En cours
+- **Contrôle visuel** (desktop + mobile) du hero v2 et de la galerie, avec `npm run dev` — personne ne l'a encore fait dans un navigateur.
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
-- **Hero v2 + galerie « Ça se passe chez nous » branchée au back** : code écrit, `tsc` et `build` OK ; **reste le contrôle visuel desktop/mobile** puis commit (entrée du 2026-10-02 « Hero v2 & vitrine »). ⚠️ Fichiers touchés : `home-sections.tsx` (Hero, GalleryStrip), `site.css`, `page.tsx`, `src/lib/showcase.ts`, `src/components/site/showcase.tsx`, `supabase/migrations/0002_showcase.sql`. **Merci de ne pas modifier ces fichiers en parallèle sans prévenir.**
 
 ### ✅ Fait
+- Détails cagnotte / évènement / paiement branchés sur Supabase (démo d'abord, UUID ensuite) — `repo.ts`, migration `0003`
+- Hero v2 (pop-ups à droite) + galerie « Ça se passe chez nous » : cartes-billets branchées au back, 13 max, popularité, repli photos — migration `0002`
 - Dossier projet créé, Next.js 15.5.26 + React 19.1.0 + Tailwind 4 + TypeScript 5.8 installés
 - Contournement du problème `NODE_ENV=production` (fichier `.npmrc` du projet)
 - Manifest PWA + icônes du prototype
@@ -48,11 +50,12 @@
 - Remplacer les images Unsplash
 - Déploiement (Vercel ou autre) + nom de domaine
 - Passer sur Node 22 LTS
-- Brancher les pages de détail `/app/cagnottes/[id]` et `/app/evenements/[id]` sur Supabase (la vitrine de la landing y renvoie déjà avec les vrais ids) + `sitemap.ts` sur les vraies données
-- Appliquer `0002_showcase.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
+- Appliquer `0002_showcase.sql` **et** `0003_public_detail.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
+- `sitemap.ts` : ajouter les vraies cagnottes / évènements (il ne liste encore que la démo)
+- Paiement : la page lit désormais les vraies données, mais le paiement lui-même reste simulé (agrégateur à choisir)
 
 ### ⚠️ Points d'attention
-- Vitrine de la landing : tant que le détail n'est pas branché à Supabase, un clic sur un vrai évènement/cagnotte mène à une 404 (voir entrée « Hero v2 & vitrine »)
+- Un lien vers un id inexistant (ou une cagnotte non publique) donne bien une 404 ; sans Supabase configuré, seuls les ids de démo (`c1`, `e1`…) fonctionnent
 - `NODE_ENV=production` est défini sur la machine : à supprimer dans les variables d'environnement Windows
 - Node 25 n'est pas une version LTS
 - Les anciens dossiers `rallyo-app` et `rallyo-pwa` sont peut-être des doublons (non supprimés, en attente de ton accord)
@@ -61,6 +64,25 @@
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Pages de détail et paiement branchés sur Supabase
+**Pourquoi :** les cartes réelles de la vitrine de la landing renvoyaient vers `/app/cagnottes/{uuid}` et `/app/evenements/{uuid}`, qui lisaient seulement les données de démo → 404.
+
+**Fichiers créés**
+- `supabase/migrations/0003_public_detail.sql` — fonctions `campaign_public(p_id)` et `event_public(p_id)` (`SECURITY DEFINER`, mêmes règles de visibilité que la RLS : cagnotte `active`/`completed`, évènement publié). Renvoient les agrégats (nombre de soutiens, billets restants) sans ouvrir la lecture de `contributions` ni `tickets`.
+- `src/lib/supabase-rest.ts` — helper `rpc()` (timeout 3 s, ne lève jamais d'erreur) + `isUuid()`.
+- `src/lib/repo.ts` — `getCagnotteAny(id)` / `getEventAny(id)` : démo d'abord (ids `c1`, `e1`…), puis Supabase si l'id est un UUID. **Mêmes types `Cagnotte` / `EventItem`** que la démo → aucune vue modifiée.
+
+**Fichiers modifiés**
+- `src/app/app/(flow)/cagnottes/[id]/page.tsx`, `evenements/[id]/page.tsx`, `paiement/page.tsx` — utilisent `repo.ts`. Cagnotte sans date limite : la phrase « Il reste N jours » devient « Cette cagnotte n'a pas de date limite ».
+- `src/lib/showcase.ts` — utilise `rpc()`, exporte `gradientFor`.
+- `.gitignore` — `.env.example` est maintenant versionné, `*.log` ignorés.
+
+**Vérifications :** `tsc --noEmit` OK ; `npm run build` OK (26 pages, accueil en régénération toutes les minutes). Commit précédent : `5d13eef` (landing + hero v2 + vitrine).
+
+**À savoir :** dates des évènements affichées en heure du Bénin (UTC+1). Non testé contre une vraie base (pas encore de projet Supabase) : à vérifier dès qu'il existera, en créant une cagnotte et un évènement de test puis en suivant les cartes de la galerie.
+
+**Prochaine action :** contrôle visuel de la landing, puis création du projet Supabase.
 
 ### 2026-10-02 — Hero v2 & vitrine « Ça se passe chez nous » branchée au back
 **Demande :** reprendre du prototype `rallyo-pw@` les pop-ups à droite et les textes « Rassemble. Célèbre. Soutiens. » / « Un seul geste pour rassembler ta communauté » ; remplacer la bande d'images sous « // L'énergie qu'on veut servir — Ça se passe chez nous » par le défilé de cartes-billets, relié au back (13 max, par popularité, photos tant qu'il n'y a rien).
@@ -82,7 +104,7 @@
 **À savoir pour l'équipe**
 - Tant que `NEXT_PUBLIC_SUPABASE_URL/ANON_KEY` ne sont pas renseignées, la galerie affiche les photos : c'est le comportement voulu.
 - Pour activer : créer le projet Supabase, exécuter `0001_init.sql` **puis** `0002_showcase.sql`, remplir `.env.local`.
-- ⚠️ Les cartes réelles pointent vers `/app/cagnottes/{id}` et `/app/evenements/{id}`, mais ces pages lisent encore `src/lib/data.ts` (démo, ids `c1`, `e1`…) : un clic sur un vrai évènement donnera une 404 tant que le détail n'est pas branché à Supabase.
+- ✅ (corrigé dans l'entrée suivante « Pages de détail… ») Les cartes réelles pointent vers `/app/cagnottes/{id}` et `/app/evenements/{id}` ; ces pages lisaient d'abord uniquement la démo, ce qui donnait une 404 — désormais branchées sur Supabase.
 - ⚠️ Les pop-ups du hero sont des données d'exemple (`EVENTS[0]`, `CAGNOTTES[0]`), étiquetées « Exemple ».
 - Les photos d'illustration viennent d'Unsplash (même chantier « remplacer les images » que le reste du site).
 - Le défilé ajuste sa vitesse au nombre de cartes ; 8 cartes minimum, 13 maximum.

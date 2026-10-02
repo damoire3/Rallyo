@@ -3,17 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/icon";
 import { CategoryBadge, Dashes, ProgressBar, TopBar } from "@/components/ui";
-import { CAGNOTTES, fmt, getCagnotte } from "@/lib/data";
+import { CAGNOTTES, fmt } from "@/lib/data";
+import { getCagnotteAny } from "@/lib/repo";
 
 type Params = { params: Promise<{ id: string }> };
 
+// Les cagnottes de démo sont pré-générées ; les vraies (UUID Supabase) sont rendues à la demande.
 export function generateStaticParams() {
   return CAGNOTTES.map((c) => ({ id: c.id }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
-  const c = getCagnotte(id);
+  const c = await getCagnotteAny(id);
   if (!c) return { title: "Cagnotte introuvable" };
   const pct = Math.round((c.raised / c.goal) * 100);
   const description = `${fmt(c.raised)} collectés sur ${fmt(c.goal)} (${pct}%) · ${c.supporters} soutiens · par ${c.org}`;
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function CagnotteDetailPage({ params }: Params) {
   const { id } = await params;
-  const c = getCagnotte(id);
+  const c = await getCagnotteAny(id);
   if (!c) notFound();
 
   const pct = Math.round((c.raised / c.goal) * 100);
@@ -82,8 +84,14 @@ export default async function CagnotteDetailPage({ params }: Params) {
             <Dashes />
           </div>
           <p className="mt-3 text-[13px] leading-relaxed text-muted">
-            Chaque contribution, même anonyme, rapproche cette communauté de son objectif. Il reste{" "}
-            <span className="text-cyan">{c.days} jours</span> pour participer à cette cagnotte.
+            Chaque contribution, même anonyme, rapproche cette communauté de son objectif.{" "}
+            {c.days > 0 ? (
+              <>
+                Il reste <span className="text-cyan">{c.days} jours</span> pour participer à cette cagnotte.
+              </>
+            ) : (
+              "Cette cagnotte n’a pas de date limite."
+            )}
           </p>
 
           <div className="mt-4 flex gap-2">
