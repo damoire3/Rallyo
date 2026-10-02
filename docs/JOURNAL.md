@@ -1,6 +1,6 @@
 # Rallyo — Journal de bord
 
-> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après grille de frais 10 % → 3 %)
+> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après intégration des spécifications V1)
 > Légende : ✅ fait · 🔄 en cours · ⏳ à faire · ⚠️ point d'attention
 
 **Projet :** `C:\Users\HP\Desktop\Arbre\Mes saas\rallyo-next` — voir `CAHIER_DES_CHARGES.md`
@@ -54,7 +54,26 @@
 - Appliquer `0002_showcase.sql`, `0003_public_detail.sql` **et** `0004_sitemap.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
 - Paiement : la page lit désormais les vraies données, mais le paiement lui-même reste simulé (agrégateur à choisir)
 
+### ⏳ À faire — Spécifications V1 (cahier des charges §9 à 18)
+Ordre **proposé** :
+1. **Valider les décisions ouvertes** (§16) : pays, qui organise, dépassement de l'objectif, objectif non atteint, versement différé, plafond du retrait anticipé, **qui supporte les frais**, slogan. *Bloquant pour la suite.*
+2. **Choisir le prestataire de paiement** et vérifier le cadre BCEAO / UMOA (§17).
+3. **Refonte du layout `/app` en web responsive** (1440 / 768 / 390 px) ; le cadre téléphone ne reste que pour la démo de la landing.
+4. **Évolution du schéma Supabase** (migration `0005`+) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur.
+5. **Parcours A** : achat sans compte, catégories de billets, billet par lien, QR vérifié côté serveur.
+6. **Parcours B** : assistant de création en 5 étapes, gestion de cagnotte (5 onglets), retrait anticipé et suivi, écran « objectif atteint ».
+7. **Parcours C** : espace organisateur, statistiques, contrôle des entrées.
+8. **Authentification** : inscription, OTP, mot de passe oublié.
+9. **Détailler les 63 écrans non décrits** (sections E à H : 22 + 8 + 15 + 18).
+10. **Back-office** (18 écrans).
+11. **Réécrire les textes publics** (FAQ, `/securite`, `/comment-ca-marche`) selon les règles de fonds validées.
+12. **Maquettes Figma** selon la structure du §15.
+
 ### ⚠️ Points d'attention
+- **Textes publics en décalage :** la FAQ, `/securite` et `/comment-ca-marche` décrivent un retrait libre des fonds, incompatible avec le modèle « fonds réservés + retrait anticipé contrôlé » (§10). À réécrire après validation des règles.
+- **Format :** le cahier demande un site web responsive ; le code actuel est une PWA dans un cadre de téléphone (§18).
+- **Frais :** grille actuelle = commission déduite de l'organisateur ; l'exemple du document ajoute des frais à l'acheteur. À trancher (§16).
+- Les éléments **réglementaires (BCEAO) et concurrentiels** cités dans le document source n'ont **pas été vérifiés** (§17).
 - Un lien vers un id inexistant (ou une cagnotte non publique) donne bien une 404 ; sans Supabase configuré, seuls les ids de démo (`c1`, `e1`…) fonctionnent
 - `NODE_ENV=production` est défini sur la machine : à supprimer dans les variables d'environnement Windows
 - Node 25 n'est pas une version LTS
@@ -64,6 +83,20 @@
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Spécifications V1 intégrées au cahier des charges
+**Demande :** ajouter au cahier des charges les documents « Architecture complète de l'application » et « Rallyo — architecture définitive V1 ».
+
+**Fait**
+- `docs/CAHIER_DES_CHARGES.md` : **sections 9 à 18** ajoutées : architecture (5 espaces, navigation, droits visiteur / compte) · règles de fonds (cagnottes, billetterie, retrait anticipé, indicateurs, remboursements, états, sécurité du billet) · parcours A/B/C · **inventaire des 119 écrans** (détail des sections A à D, 56 écrans) · contenu des pages clés · modales et états · structure Figma · décisions à figer · conformité · écarts avec le code.
+- Retouches ciblées des sections existantes : pointeur au §3, §3.3 (remboursements, portefeuille), §7 (points 2 et 8 à 11), §8 (5 décisions), numérotation 10.8.
+- Chaque affirmation est marquée ✅ (choix du porteur), 🟡 (proposition) ou ❓ (ouvert).
+
+**Constats**
+- 4 décisions sont déjà prises : web responsive, achat sans compte, pas de portefeuille Rallyo, fonds réservés avec retrait anticipé contrôlé.
+- Le document ne tranche pas : pays, qui organise, objectif dépassé / non atteint, versement différé, **qui paie les frais**, slogan.
+- Détail fourni pour 56 écrans sur 119 ; **63 écrans (sections E à H) restent à détailler**.
+- Aucun code modifié dans cette entrée.
 
 ### 2026-10-02 — Grille de frais dégressive 10 % → 3 %
 **Décision :** de 10 % à 3 %, même grille pour cagnottes et billetterie. **Tranches progressives** (choix de l'assistant : avec des seuils « tout ou rien », collecter 100 000 FCFA aurait coûté moins que 99 999).
