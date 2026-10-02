@@ -56,14 +56,14 @@
 
 ### ⏳ À faire — Spécifications V1 (cahier des charges §9 à 18)
 Ordre **proposé** :
-1. **Valider les décisions ouvertes** (§16) : pays, **nature de la « carte » de l'organisateur**, dépassement de l'objectif, versement différé, plafond du retrait anticipé, frais du prestataire Mobile Money, slogan. *(Tranchés le 2026-10-02 : qui supporte les frais, objectif non atteint, qui organise.)*
+1. **Valider les décisions ouvertes** (§16) : pays, dépassement de l'objectif, versement différé, plafond du retrait anticipé, frais du prestataire Mobile Money, slogan. *(Tranchés le 2026-10-02 : qui supporte les frais, objectif non atteint, qui organise.)*
 2. **Choisir le prestataire de paiement** et vérifier le cadre BCEAO / UMOA (§17).
 3. **Refonte du layout `/app` en web responsive** (1440 / 768 / 390 px) ; le cadre téléphone ne reste que pour la démo de la landing.
-4. **Évolution du schéma Supabase** (migration `0005`+) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur.
+4. **Évolution du schéma Supabase** (migration `0005`+) : `ticket_types`, `orders`, `order_items`, `withdrawals`, `payout_accounts`, `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` ; statuts étendus de cagnotte et d'évènement ; champs acheteur invité ; profil public d'organisateur ; **vérification d'identité et moyen de réception de l'organisateur** (`organizer_verifications`, `payout_accounts`).
 5. **Parcours A** : achat sans compte, catégories de billets, billet par lien, QR vérifié côté serveur.
 6. **Parcours B** : assistant de création en 5 étapes, gestion de cagnotte (5 onglets), retrait anticipé et suivi, écran « objectif atteint ».
 7. **Parcours C** : espace organisateur, statistiques, contrôle des entrées.
-8. **Authentification** : inscription, OTP, mot de passe oublié.
+8. **Authentification** : inscription, OTP, mot de passe oublié ; **inscription organisateur (identité + moyen de réception, §10.9)**.
 9. **Détailler les 63 écrans non décrits** (sections E à H : 22 + 8 + 15 + 18).
 10. **Back-office** (18 écrans).
 11. **Réécrire les textes publics** (FAQ, `/securite`, `/comment-ca-marche`) selon les règles de fonds validées.
@@ -72,7 +72,8 @@ Ordre **proposé** :
 ### ⚠️ Points d'attention
 - **Textes publics en décalage :** la FAQ, `/securite` et `/comment-ca-marche` décrivent un retrait libre des fonds, incompatible avec le modèle « fonds réservés + retrait anticipé contrôlé » (§10). À réécrire après validation des règles.
 - **Format :** le cahier demande un site web responsive ; le code actuel est une PWA dans un cadre de téléphone (§18).
-- **Frais :** décision prise (commission déduite de l'organisateur) : aucun changement de code. Reste à préciser qui supporte les frais du prestataire Mobile Money.
+$1
+- **Pièces d'identité des organisateurs :** données sensibles (§10.9). Stockage privé, accès restreint, durée de conservation et cadre légal à définir **avant** de collecter la moindre pièce.
 - Les éléments **réglementaires (BCEAO) et concurrentiels** cités dans le document source n'ont **pas été vérifiés** (§17).
 - Un lien vers un id inexistant (ou une cagnotte non publique) donne bien une 404 ; sans Supabase configuré, seuls les ids de démo (`c1`, `e1`…) fonctionnent
 - `NODE_ENV=production` est défini sur la machine : à supprimer dans les variables d'environnement Windows
@@ -83,6 +84,16 @@ Ordre **proposé** :
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — « Une carte comme sur Paykko » : précisé
+**Réponse :** les deux : **identité** et **moyen de recevoir l'argent**.
+
+- Décision organisateur passée de 🟡 à ✅ : toute personne avec un compte, qui enregistre ses informations, une **pièce d'identité** et un **moyen de réception** (carte bancaire ou compte Mobile Money).
+- Nouveau **§10.9** du cahier : onboarding de l'organisateur, statuts de vérification, et conception : la carte est **enregistrée chez le prestataire** (jeton), pas chez Rallyo, pour rester cohérent avec « aucune donnée bancaire stockée ».
+- Ajouts : §7 point 12 (protection des données), §18 (profil organisateur : `organizer_verifications`, bucket privé, `payout_accounts`), §8, §16.
+- **Reste ouvert :** moment de l'enregistrement (compte, première publication ou premier versement), publication non vérifiée visible ou bloquée, même exigence pour les cagnottes ?
+- Paykko n'a toujours pas été identifié : la décision ne dépend plus de cette référence.
+- Aucun code modifié.
 
 ### 2026-10-02 — Trois décisions enregistrées
 | Question | Décision |

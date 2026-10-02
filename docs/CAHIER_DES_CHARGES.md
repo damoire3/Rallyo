@@ -107,8 +107,9 @@ Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspo
 $1
 8. **Prestataire de paiement agréé par pays** et cadre réglementaire BCEAO / UMOA : à vérifier (§17). Les éléments du document source n'ont pas été vérifiés.
 9. **Réécrire les textes publics** (FAQ « objectif non atteint » et « retirer mes fonds », `/securite`, `/comment-ca-marche`) : ils décrivent aujourd'hui un retrait libre, incompatible avec les fonds réservés du §10.
-10. **Tranché :** la commission est déduite des recettes de l'organisateur (§16). **Reste à préciser :** qui supporte les frais du prestataire Mobile Money, et **la nature de la « carte »** que l'organisateur doit enregistrer (pièce d'identité, carte bancaire, carte Mobile Money ?).
-11. Arbitrer le **message d'accueil** (« Les moments commencent ici. » ou « Rassemble. Célèbre. Soutiens. ») et la **direction visuelle** (§16).
+10. **Tranché :** la commission est déduite des recettes de l'organisateur (§16). **Reste à préciser :** qui supporte les frais du prestataire Mobile Money.
+$1
+12. **Protection des données des pièces d'identité** des organisateurs (§10.9) : stockage, durée de conservation, consentement, cadre légal du pays de lancement.
 
 ## 8. Décisions prises
 
@@ -131,7 +132,7 @@ $1
 | 2026-10-02 | ✅ Page publique transparente : objectif, montant, nombre de contributions ou de billets, dates, statut |
 | 2026-10-02 | ✅ **Frais supportés par l'organisateur** (commission déduite de ses recettes) |
 | 2026-10-02 | ✅ **Cagnotte sous l'objectif à la date de fin : le créateur garde tout ce qui a été collecté** |
-| 2026-10-02 | 🟡 **Organisateur d'évènement : toute personne avec un compte**, qui enregistre ses informations et « une carte comme sur Paykko » (nature à préciser) |
+| 2026-10-02 | ✅ **Organisateur d'évènement : toute personne avec un compte**, qui enregistre **identité + moyen de recevoir l'argent** (carte bancaire ou compte Mobile Money), enregistré chez le prestataire (§10.9) |
 
 
 ---
@@ -241,6 +242,16 @@ RALLYO
 - Le QR code n'est **pas** valide parce qu'il s'affiche sur un téléphone : sa validité est **vérifiée par le système de contrôle** (statut en base, usage unique).
 - Un billet déjà utilisé est refusé ; messages dédiés (billet déjà utilisé, session expirée, compte suspendu).
 - Le billet est accessible par **lien reçu** (acheteur sans compte) : télécharger, ajouter au calendrier, partager, voir l'évènement.
+
+### 10.9 Inscription de l'organisateur (identité et moyen de réception)
+- ✅ **Toute personne avec un compte** peut organiser un évènement. **Dans tous les cas**, elle enregistre : ses **informations**, une **pièce d'identité** et **un moyen de recevoir l'argent** (**carte bancaire** ou **compte Mobile Money**).
+- **Rôle :** vérifier l'organisateur (badge « Vérifié »), sécuriser les versements (§10.3, §10.4) et répondre aux exigences du prestataire de paiement (§17).
+- 🟡 **Statuts de vérification :** Non renseigné → En vérification → Vérifié · Refusé · À compléter.
+- **Conception :** Rallyo ne stocke aucune donnée bancaire (§9.1). La carte ou le compte Mobile Money est donc **enregistré chez le prestataire de paiement** ; Rallyo ne conserve qu'une **référence (jeton)** et les derniers chiffres affichables.
+- ⚠️ **Pièces d'identité = données personnelles sensibles :** stockage privé et chiffré, accès réservé à l'administration, durée de conservation limitée, consentement explicite, cadre légal de protection des données du pays de lancement à vérifier avant ouverture (§17).
+- ❓ **Moment de l'enregistrement :** à la création du compte organisateur, avant la première publication, ou avant le premier versement ?
+- ❓ **Une publication non vérifiée** est-elle visible (avec mention « non vérifié ») ou bloquée jusqu'à vérification ?
+- ❓ **Cagnottes :** la même exigence s'applique-t-elle aux créateurs de cagnottes, ou seulement au moment du retrait (§10.4) ?
 
 ## 11. Parcours utilisateurs (à maquetter de bout en bout)
 
@@ -356,7 +367,7 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | 1 | Plateformes | **Site web responsive** (le document parle de « plateforme web »). Une appli mobile native n'est pas retenue. | ✅ |
 | 2 | Pays au lancement | Non tranché. Le **Bénin** est le seul marché cité pour les prestataires (§17) ; devise FCFA. | ❓ |
 | 3 | Types de cagnottes | Les catégories prévues couvrent **personnelles et collectes publiques** (Anniversaire, Mariage, Projet, Solidarité, Association, Urgence, Études, Autre). | 🟡 |
-| 4 | Qui peut organiser un évènement | **Toute personne avec un compte.** Dans tous les cas, l'organisateur **enregistre ses informations et une carte « comme sur Paykko »** (plateforme non identifiée ; **nature de la carte à préciser**). L'état « En attente de validation » (§10.7) reste à confirmer. | 🟡 |
+| 4 | Qui peut organiser un évènement | **Toute personne avec un compte.** Dans tous les cas, l'organisateur enregistre ses informations, une **pièce d'identité** et **un moyen de recevoir l'argent** (carte bancaire ou compte Mobile Money) : voir §10.9. L'état « En attente de validation » (§10.7) reste à confirmer. | ✅ |
 | 5 | Moyens de paiement | **Mobile Money et cartes bancaires.** | ✅ |
 | 6 | Réception des fonds | **Versement via le prestataire**, pas de portefeuille Rallyo. Versement direct ou différé selon l'opération. | ✅ |
 | 7 | Compte requis | **Sans compte pour acheter ou contribuer ; compte pour créer et gérer.** | ✅ |
@@ -390,6 +401,7 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | **États de cagnotte** | `draft / active / completed / closed` | Objectif atteint, retrait en attente / en cours, fonds versés, suspendue, en vérification | Étendre l'énumération et la machine d'états |
 | **États d'évènement** | `is_published` (booléen) | Brouillon, en attente de validation, publié, ventes ouvertes, complet, terminé | Remplacer par un statut |
 | **Retraits** | Aucun | Demandes, statuts, comptes de réception, traçabilité | Tables `withdrawals`, `payout_accounts` ; écrans §10.4 |
+| **Profil organisateur** | `profiles` : nom, téléphone, avatar, `is_verified` | Identité (pièce) + moyen de réception (carte bancaire ou Mobile Money), statuts de vérification (§10.9) | Table `organizer_verifications`, **bucket privé** pour les pièces, `payout_accounts` (jetons du prestataire, jamais de numéro de carte) |
 | **Fonds réservés** | Aucun | Indicateurs total / retiré / réservé / disponible | Calcul côté serveur, lié aux statuts du prestataire |
 | **Mises à jour, favoris, notifications, signalements, remboursements** | Aucun | Voir §12 et §14 | Tables `campaign_updates`, `favorites`, `notifications`, `reports`, `refunds` |
 | **Organisateur public** | Aucun | Profil public (nom, logo, évènements organisés) | Champs et page de profil public |
