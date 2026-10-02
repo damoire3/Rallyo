@@ -50,8 +50,7 @@
 - Remplacer les images Unsplash
 - Déploiement (Vercel ou autre) + nom de domaine
 - Passer sur Node 22 LTS
-- Appliquer `0002_showcase.sql` **et** `0003_public_detail.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
-- `sitemap.ts` : ajouter les vraies cagnottes / évènements (il ne liste encore que la démo)
+- Appliquer `0002_showcase.sql`, `0003_public_detail.sql` **et** `0004_sitemap.sql` sur le projet Supabase et renseigner `.env.local` (voir `.env.example`)
 - Paiement : la page lit désormais les vraies données, mais le paiement lui-même reste simulé (agrégateur à choisir)
 
 ### ⚠️ Points d'attention
@@ -64,6 +63,12 @@
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Sitemap sur les vraies données
+- `supabase/migrations/0004_sitemap.sql` — fonction `sitemap_entries(max_items)` (SECURITY DEFINER, id + type + date de création seulement, mêmes règles de visibilité que `0003`, 5 000 max).
+- `src/app/sitemap.ts` — asynchrone, régénéré toutes les heures. **Règle :** si `NEXT_PUBLIC_SUPABASE_URL` et `..._ANON_KEY` sont renseignées → seules les vraies cagnottes / évènements sont listés (la démo n'est pas indexée en production) ; sinon → pages de démo (développement local).
+- Vérifications : `tsc` OK, `build` OK (26 pages). Non testé contre une vraie base.
+- ⚠️ `NEXT_PUBLIC_SITE_URL` ajouté à `.env.example` : à renseigner en production (sinon le sitemap pointe vers `http://localhost:3000`).
 
 ### 2026-10-02 — Pages de détail et paiement branchés sur Supabase
 **Pourquoi :** les cartes réelles de la vitrine de la landing renvoyaient vers `/app/cagnottes/{uuid}` et `/app/evenements/{uuid}`, qui lisaient seulement les données de démo → 404.
