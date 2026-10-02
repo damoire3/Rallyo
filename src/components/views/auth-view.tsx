@@ -44,7 +44,7 @@ export function AuthView() {
           className="mt-6 flex flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            router.push("/");
+            router.push("/app");
           }}
         >
           {!isLogin && (
@@ -77,7 +77,7 @@ export function AuthView() {
           <span className="text-cyan">{isLogin ? "Créer un compte" : "Se connecter"}</span>
         </button>
 
-        <Link href="/" className="mt-1 block w-full py-2 text-center text-[12px] text-faint">
+        <Link href="/app" className="mt-1 block w-full py-2 text-center text-[12px] text-faint">
           Continuer sans compte
         </Link>
       </div>

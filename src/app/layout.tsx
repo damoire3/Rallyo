@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   applicationName: "Rallyo",
   appleWebApp: { capable: true, title: "Rallyo", statusBarStyle: "black-translucent" },
   icons: { apple: "/icons/icon-192.png" },
+  openGraph: { siteName: "Rallyo", locale: "fr_FR", type: "website" },
 };
 
 export const viewport: Viewport = {
@@ -31,14 +32,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${inter.variable} ${anton.variable} ${jetbrains.variable}`}>
-      <body className="bg-black text-ink antialiased">
-        <div className="flex min-h-dvh items-center justify-center sm:py-4">
-          {/* Sur mobile : plein écran. Sur ordinateur : cadre de téléphone. */}
-          <div className="relative flex h-dvh w-full max-w-[430px] flex-col overflow-hidden bg-bg sm:h-[900px] sm:max-h-[calc(100dvh-2rem)] sm:rounded-[40px] sm:shadow-[0_0_0_8px_#050505,0_20px_60px_rgba(0,0,0,0.6)]">
-            {children}
-          </div>
-        </div>
-      </body>
+      <body className="bg-black text-ink antialiased">{children}</body>
     </html>
   );
 }

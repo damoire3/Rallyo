@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Rallyo",
     description:
       "Rassemble, célèbre, soutiens : cagnottes en ligne et billetterie d'évènements pour l'Afrique de l'Ouest.",
-    start_url: "/",
+    start_url: "/app",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

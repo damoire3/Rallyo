@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { Icon, type IconName } from "./icon";
 
 const ITEMS: { href: string; icon: IconName; label: string; central?: boolean }[] = [
-  { href: "/", icon: "home", label: "Accueil" },
-  { href: "/explorer", icon: "search", label: "Explorer" },
-  { href: "/creer", icon: "plusCircle", label: "Créer", central: true },
-  { href: "/billets", icon: "ticket", label: "Billets" },
-  { href: "/profil", icon: "user", label: "Profil" },
+  { href: "/app", icon: "home", label: "Accueil" },
+  { href: "/app/explorer", icon: "search", label: "Explorer" },
+  { href: "/app/creer", icon: "plusCircle", label: "Créer", central: true },
+  { href: "/app/billets", icon: "ticket", label: "Billets" },
+  { href: "/app/profil", icon: "user", label: "Profil" },
 ];
 
 export function BottomNav() {
@@ -21,7 +21,7 @@ export function BottomNav() {
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 10px)" }}
     >
       {ITEMS.map((it) => {
-        const active = it.href === "/" ? pathname === "/" : pathname.startsWith(it.href);
+        const active = it.href === "/app" ? pathname === "/app" : pathname.startsWith(it.href);
         if (it.central) {
           return (
             <Link key={it.href} href={it.href} aria-label={it.label} className="-mt-6 flex flex-col items-center">

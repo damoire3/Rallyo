@@ -33,13 +33,13 @@ export default function HomePage() {
         </p>
         <div className="relative mb-4 mt-4 flex gap-2.5">
           <Link
-            href="/creer"
+            href="/app/creer"
             className="bg-brand flex-1 rounded-2xl py-3 text-center text-[13px] font-bold text-bg"
           >
             Lancer une cagnotte
           </Link>
           <Link
-            href="/explorer"
+            href="/app/explorer"
             className="rounded-2xl border border-input bg-card px-4 py-3 text-[13px] font-bold text-ink"
           >
             Explorer
@@ -47,7 +47,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <SectionHeader title="Cagnottes du moment" href="/explorer" />
+      <SectionHeader title="Cagnottes du moment" href="/app/explorer" />
       <div className="no-scrollbar flex gap-3 overflow-x-auto px-5 pb-1">
         {CAGNOTTES.map((c) => (
           <div key={c.id} className="w-[220px] shrink-0">
@@ -57,7 +57,7 @@ export default function HomePage() {
       </div>
 
       <div className="mt-7">
-        <SectionHeader title="Évènements à ne pas rater" href="/explorer" />
+        <SectionHeader title="Évènements à ne pas rater" href="/app/explorer" />
       </div>
       <div className="no-scrollbar flex gap-3 overflow-x-auto px-5 pb-1">
         {EVENTS.map((e) => (

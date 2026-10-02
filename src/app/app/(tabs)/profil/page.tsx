@@ -33,7 +33,7 @@ export default function ProfilePage() {
           </button>
         ))}
         <Link
-          href="/connexion"
+          href="/app/connexion"
           className="mt-2 rounded-2xl border border-input py-3.5 text-center text-[13px] font-semibold text-ink"
         >
           Se connecter / Créer un compte

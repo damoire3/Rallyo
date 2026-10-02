@@ -35,7 +35,7 @@ export function PaymentView({ kind, title, amount, anonymous }: Props) {
             : "Ta contribution a bien été ajoutée à la cagnotte."}
         </p>
         <Link
-          href={isEvent ? "/billets" : "/"}
+          href={isEvent ? "/app/billets" : "/app"}
           className="mt-8 w-full rounded-2xl bg-card py-4 text-center text-[14px] font-bold text-ink"
         >
           {isEvent ? "Voir mes billets" : "Retour à l’accueil"}

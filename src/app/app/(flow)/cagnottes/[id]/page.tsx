@@ -90,7 +90,7 @@ export default async function CagnotteDetailPage({ params }: Params) {
             {[2000, 5000, 10000].map((v) => (
               <Link
                 key={v}
-                href={`/paiement?type=cagnotte&id=${c.id}&amount=${v}`}
+                href={`/app/paiement?type=cagnotte&id=${c.id}&amount=${v}`}
                 className="flex-1 rounded-xl bg-card-alt py-2 text-center text-[12px] font-bold text-ink"
               >
                 {fmt(v)}
@@ -100,13 +100,13 @@ export default async function CagnotteDetailPage({ params }: Params) {
         </div>
 
         <Link
-          href={`/paiement?type=cagnotte&id=${c.id}`}
+          href={`/app/paiement?type=cagnotte&id=${c.id}`}
           className="bg-brand mt-4 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-[14px] font-bold text-bg"
         >
           <Icon name="handCoins" size={17} /> Contribuer à la cagnotte
         </Link>
         <Link
-          href={`/paiement?type=cagnotte&id=${c.id}&anon=1`}
+          href={`/app/paiement?type=cagnotte&id=${c.id}&anon=1`}
           className="mt-2 block w-full rounded-2xl py-3 text-center text-[13px] font-bold text-muted"
         >
           Faire un don anonyme

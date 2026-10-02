@@ -84,7 +84,7 @@ export default async function EventDetailPage({ params }: Params) {
             <p className="font-mono text-[22px] font-bold text-white">{fmt(e.price)}</p>
           </div>
           <Link
-            href={`/paiement?type=event&id=${e.id}`}
+            href={`/app/paiement?type=event&id=${e.id}`}
             className="bg-brand flex items-center gap-2 rounded-2xl px-8 py-4 text-[14px] font-bold text-bg"
           >
             <Icon name="ticket" size={17} /> Acheter

@@ -10,7 +10,7 @@ type Props =
 export function StubCard(props: Props) {
   const { item } = props;
   const isCagnotte = props.kind === "cagnotte";
-  const href = isCagnotte ? `/cagnottes/${item.id}` : `/evenements/${item.id}`;
+  const href = isCagnotte ? `/app/cagnottes/${item.id}` : `/app/evenements/${item.id}`;
 
   return (
     <Link
