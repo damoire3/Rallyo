@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SiteIcon } from "@/components/site/site-icon";
 import Link from "next/link";
 import { CtaBand, FaqItems, PageHero } from "@/components/site/blocks";
 import { FAQ, IMAGES, PAYMENT_METHODS, TRUST_CARDS } from "@/lib/site-data";
@@ -35,7 +36,7 @@ export default function SecurityPage() {
           <div className="trust-grid">
             {TRUST_CARDS.map((c) => (
               <div className="trust-card" key={c.title} data-reveal="">
-                <div className="icon">{c.icon}</div>
+                <div className="icon"><SiteIcon name={c.icon} /></div>
                 <h3>{c.title}</h3>
                 <p>{c.text}</p>
               </div>

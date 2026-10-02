@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SiteIcon } from "@/components/site/site-icon";
 import Link from "next/link";
 import { CtaBand, PageHero } from "@/components/site/blocks";
 import { AUDIENCES, COMPARE_COLS, COMPARE_ROWS, IMAGES, PROBLEMS, WHY_CARDS } from "@/lib/site-data";
@@ -33,7 +34,7 @@ export default function WhyPage() {
           <div className="aud-grid">
             {PROBLEMS.map((p) => (
               <div className="aud-card" key={p.title} data-reveal="">
-                <div className="icon">{p.icon}</div>
+                <div className="icon"><SiteIcon name={p.icon} /></div>
                 <h3>{p.title}</h3>
                 <p>{p.text}</p>
               </div>
@@ -53,7 +54,7 @@ export default function WhyPage() {
           <div className="why-grid" style={{ marginTop: 0 }}>
             {WHY_CARDS.map((c) => (
               <div className="why-card" key={c.title} data-reveal="">
-                <div className="icon">{c.icon}</div>
+                <div className="icon"><SiteIcon name={c.icon} /></div>
                 <h4>{c.title}</h4>
                 <p>{c.text}</p>
               </div>
@@ -113,7 +114,7 @@ export default function WhyPage() {
           <div className="aud-grid">
             {AUDIENCES.map((a) => (
               <div className="aud-card" key={a.title} data-reveal="">
-                <div className="icon">{a.icon}</div>
+                <div className="icon"><SiteIcon name={a.icon} /></div>
                 <h3>{a.title}</h3>
                 <p>{a.text}</p>
               </div>

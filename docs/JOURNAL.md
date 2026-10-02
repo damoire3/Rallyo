@@ -1,6 +1,6 @@
 # Rallyo — Journal de bord
 
-> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après Hero v2 & vitrine)
+> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après grille de frais 10 % → 3 %)
 > Légende : ✅ fait · 🔄 en cours · ⏳ à faire · ⚠️ point d'attention
 
 **Projet :** `C:\Users\HP\Desktop\Arbre\Mes saas\rallyo-next` — voir `CAHIER_DES_CHARGES.md`
@@ -11,6 +11,7 @@
 ## 1. Tableau de bord
 
 ### 🔄 En cours
+- **Contrôle visuel** et **build** de l'ensemble (icônes Lucide + grille de frais) : à faire. Les icônes Lucide (site-icon, icon.tsx, home-sections, securite, pourquoi-rallyo, site.css) sont faites mais **non commitées**.
 - **Contrôle visuel** (desktop + mobile) du hero v2 et de la galerie, avec `npm run dev` — personne ne l'a encore fait dans un navigateur.
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
 
@@ -63,6 +64,34 @@
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-02 — Grille de frais dégressive 10 % → 3 %
+**Décision :** de 10 % à 3 %, même grille pour cagnottes et billetterie. **Tranches progressives** (choix de l'assistant : avec des seuils « tout ou rien », collecter 100 000 FCFA aurait coûté moins que 99 999).
+
+| Part de la collecte | Taux |
+|---|---|
+| jusqu'à 100 000 FCFA | 10 % |
+| 100 001 à 500 000 | 8 % |
+| 500 001 à 1 000 000 | 6 % |
+| 1 000 001 à 2 500 000 | 4 % |
+| au-delà de 2 500 000 | 3 % |
+
+**Fichiers**
+- `src/lib/fees.ts` (nouveau) : `FEE_TIERS`, `computeFee()`, `tierLabel()`. Source unique, réutilisable côté serveur pour le calcul réel.
+- `src/lib/site-data.ts` : cartes Tarifs (« 10 → 3 % dégressif »), FAQ « Combien coûte Rallyo ? » ; `FEE_RATES` supprimé.
+- `src/components/site/fee-calculator.tsx` : montant **exact**, taux moyen réel, détail par tranche.
+- `src/app/(site)/tarifs/page.tsx` : tableau des tranches + simulateur.
+- `src/app/(site)/site.css` : 10 lignes ajoutées en fin de fichier (détail du simulateur).
+
+**Vérifié :** `computeFee` testé à la main (0, 50 000, 99 999, 100 000, 500 000, 1 M, 2,5 M, 5 M, 10 M) et sur 6 millions de montants : **0 cas où la commission baisse quand le montant monte**. Valeurs : 100 000 → 10 000 ; 500 000 → 42 000 ; 5 000 000 → 207 000.
+
+**⚠️ À savoir**
+- Le taux **moyen** ne tombe jamais à 3 % : 4,1 % à 5 M FCFA, 3,6 % à 10 M. Le 3 % ne s'applique qu'à la tranche au-delà de 2,5 M.
+- Taux intermédiaires (8 / 6 / 4 %) et seuils proposés par l'assistant, à valider ; modifiables dans `FEE_TIERS` uniquement.
+- À 10 %, la billetterie égale le taux cité pour Tikerama (10 %, non vérifié) ; les petites cagnottes sont au double des 5 % cités pour leurs cotisations.
+- Vérifier que 3 % couvre les frais Mobile Money.
+- **Build validé** : `tsc` 0 erreur, `npm run build` OK (26 pages, icônes Lucide incluses). Serveur de production testé : `/tarifs` affiche la grille, 22 000 FCFA de commission pour 250 000 collectés (taux moyen 8,8 %), la FAQ ne contient plus les anciens taux ; `/`, `/app`, `/app/explorer`, `/securite`, `/pourquoi-rallyo`, `/comment-ca-marche` répondent 200.
+- **Reste à faire : contrôle visuel dans un navigateur** (desktop + mobile), jamais fait.
 
 ### 2026-10-02 — Sitemap sur les vraies données
 - `supabase/migrations/0004_sitemap.sql` — fonction `sitemap_entries(max_items)` (SECURITY DEFINER, id + type + date de création seulement, mêmes règles de visibilité que `0003`, 5 000 max).

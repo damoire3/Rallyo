@@ -2,58 +2,60 @@
 
 import { useState } from "react";
 import { fmt } from "@/lib/data";
-import { FEE_RATES } from "@/lib/site-data";
+import { computeFee, FEE_MAX_RATE, FEE_MIN_RATE } from "@/lib/fees";
 
-type Kind = "cagnotte" | "billetterie";
-
-/** Simulateur : fourchette de frais Rallyo (hors frais du prestataire Mobile Money). */
+/** Simulateur : commission exacte selon la grille dégressive (hors frais du prestataire Mobile Money). */
 export function FeeCalculator() {
-  const [kind, setKind] = useState<Kind>("cagnotte");
-  const [raw, setRaw] = useState("100000");
+  const [raw, setRaw] = useState("250000");
 
   const amount = Number(raw.replace(/\D/g, "")) || 0;
-  const [lo, hi] = FEE_RATES[kind];
-  const feeLo = Math.round((amount * lo) / 100);
-  const feeHi = Math.round((amount * hi) / 100);
+  const r = computeFee(amount);
+  const rate = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(r.effectiveRate);
 
   return (
     <div className="calc">
-      <div className="calc-tabs" role="group" aria-label="Type de collecte">
-        {(["cagnotte", "billetterie"] as const).map((k) => (
-          <button key={k} type="button" className="tab-btn" aria-pressed={kind === k} onClick={() => setKind(k)}>
-            {k === "cagnotte" ? "Cagnotte" : "Billetterie"}
-          </button>
-        ))}
-      </div>
-
-      <label htmlFor="calc-amount">{kind === "cagnotte" ? "Montant collecté (FCFA)" : "Ventes de billets (FCFA)"}</label>
+      <label htmlFor="calc-amount">Montant collecté ou ventes de billets (FCFA)</label>
       <input
         id="calc-amount"
         inputMode="numeric"
         value={amount ? new Intl.NumberFormat("fr-FR").format(amount) : ""}
         onChange={(e) => setRaw(e.target.value)}
-        placeholder="Ex : 100 000"
+        placeholder="Ex : 250 000"
       />
 
-      <div className="calc-rows">
+      <div className="calc-rows" aria-live="polite">
         <div className="calc-row">
-          <span>
-            Commission Rallyo ({lo} à {hi} %)
-          </span>
-          <b>
-            {fmt(feeLo)} – {fmt(feeHi)}
-          </b>
+          <span>Commission Rallyo</span>
+          <b>{fmt(r.fee)}</b>
+        </div>
+        <div className="calc-row">
+          <span>Taux moyen réel</span>
+          <b>{amount ? `${rate} %` : `${FEE_MAX_RATE} %`}</b>
         </div>
         <div className="calc-row total">
-          <span>Tu reçois environ</span>
-          <b>
-            {fmt(Math.max(0, amount - feeHi))} – {fmt(Math.max(0, amount - feeLo))}
-          </b>
+          <span>Tu reçois</span>
+          <b>{fmt(r.net)}</b>
         </div>
       </div>
+
+      {r.slices.length > 1 && (
+        <details className="calc-detail">
+          <summary>Voir le détail par tranche</summary>
+          {r.slices.map((s) => (
+            <div className="calc-row" key={s.from}>
+              <span>
+                {fmt(s.amount)} à {s.rate} %
+              </span>
+              <b>{fmt(Math.round(s.fee))}</b>
+            </div>
+          ))}
+        </details>
+      )}
+
       <p className="note">
-        Estimation hors frais du prestataire de paiement Mobile Money, qui varient selon l’opérateur. Les taux exacts seront
-        confirmés au lancement.
+        Le taux baisse par tranches, de {FEE_MAX_RATE} % à {FEE_MIN_RATE} % : chaque tranche est facturée à son propre taux,
+        donc plus tu collectes, plus ton taux moyen diminue. Estimation hors frais du prestataire de paiement Mobile Money,
+        qui varient selon l’opérateur. Les taux seront confirmés au lancement.
       </p>
     </div>
   );

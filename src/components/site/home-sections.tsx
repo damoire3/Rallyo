@@ -1,5 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
+import { SiteIcon } from "./site-icon";
+import { Check } from "lucide-react";
 import { PhoneDemo } from "./phone-demo";
 import { Stat, TiltCard } from "./interactive";
 import { FaqItems } from "./blocks";
@@ -74,9 +76,9 @@ export function Hero() {
             <Link href="/comment-ca-marche" className="btn-outline">Comment ça marche</Link>
           </div>
           <div className="hero-checks">
-            <span>✓ 0 FCFA à l’inscription</span>
-            <span>✓ Dons anonymes possibles</span>
-            <span>✓ Installable comme une app</span>
+            <span><Check size={15} strokeWidth={2.5} aria-hidden /> 0 FCFA à l’inscription</span>
+            <span><Check size={15} strokeWidth={2.5} aria-hidden /> Dons anonymes possibles</span>
+            <span><Check size={15} strokeWidth={2.5} aria-hidden /> Installable comme une app</span>
           </div>
         </div>
         <HeroPopups />
@@ -193,7 +195,7 @@ export function Why() {
       <div className="why-grid">
         {WHY_CARDS.map((c) => (
           <div className="why-card" key={c.title} data-reveal="">
-            <div className="icon">{c.icon}</div>
+            <div className="icon"><SiteIcon name={c.icon} /></div>
             <h4>{c.title}</h4>
             <p>{c.text}</p>
           </div>
@@ -301,7 +303,7 @@ export function TrustStrip() {
         <div className="trust-grid">
           {TRUST_CARDS.slice(0, 3).map((c) => (
             <div className="trust-card" key={c.title} data-reveal="">
-              <div className="icon">{c.icon}</div>
+              <div className="icon"><SiteIcon name={c.icon} /></div>
               <h3>{c.title}</h3>
               <p>{c.text}</p>
             </div>

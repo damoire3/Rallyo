@@ -1,3 +1,5 @@
+import { FEE_MAX_RATE, FEE_MIN_RATE } from "./fees";
+
 const u = (id: string, w: number) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
@@ -54,10 +56,10 @@ export const MARQUEE = [
 ];
 
 export const WHY_CARDS = [
-  { icon: "📱", title: "Mobile Money d’abord", text: "Paie et reçois comme tu en as l’habitude : MTN, Moov, Celtiis, Orange Money, Wave, selon ton pays." },
-  { icon: "⚡", title: "En ligne en 5 minutes", text: "Un titre, un objectif, une photo : ta page est prête à être partagée sur WhatsApp." },
-  { icon: "🕶️", title: "Dons anonymes", text: "Certains veulent donner sans être vus. Ton nom n’apparaît ni sur la page ni dans la liste des soutiens." },
-  { icon: "🎟️", title: "Billets sans papier", text: "E-billet avec QR code envoyé juste après le paiement, un seul passage par code." },
+  { icon: "smartphone", title: "Mobile Money d’abord", text: "Paie et reçois comme tu en as l’habitude : MTN, Moov, Celtiis, Orange Money, Wave, selon ton pays." },
+  { icon: "zap", title: "En ligne en 5 minutes", text: "Un titre, un objectif, une photo : ta page est prête à être partagée sur WhatsApp." },
+  { icon: "eye-off", title: "Dons anonymes", text: "Certains veulent donner sans être vus. Ton nom n’apparaît ni sur la page ni dans la liste des soutiens." },
+  { icon: "qr-code", title: "Billets sans papier", text: "E-billet avec QR code envoyé juste après le paiement, un seul passage par code." },
 ];
 
 export const STATS = [
@@ -81,12 +83,12 @@ export const CASES = [
 ];
 
 export const TRUST_CARDS = [
-  { icon: "🔐", title: "Aucune donnée bancaire chez nous", text: "Les paiements sont traités par des prestataires de paiement agréés. Rallyo ne stocke ni code secret, ni numéro de carte." },
-  { icon: "✅", title: "Organisateurs vérifiés", text: "Une vérification d’identité est demandée avant tout retrait de fonds. Les pages vérifiées affichent un badge." },
-  { icon: "📊", title: "Transparence de la collecte", text: "Montant collecté, objectif et nombre de soutiens sont visibles publiquement. Pas de zone d’ombre." },
-  { icon: "🕶️", title: "Dons anonymes réels", text: "Un don anonyme n’affiche ni ton nom ni ton numéro sur la page publique, ni dans la liste des soutiens." },
-  { icon: "🚩", title: "Signalement et modération", text: "Chaque page peut être signalée. L’équipe examine et peut suspendre une cagnotte ou bloquer un retrait suspect." },
-  { icon: "🎟️", title: "Billets infalsifiables", text: "Chaque billet a un code unique, valable une seule fois. Un billet déjà scanné est refusé à l’entrée." },
+  { icon: "lock", title: "Aucune donnée bancaire chez nous", text: "Les paiements sont traités par des prestataires de paiement agréés. Rallyo ne stocke ni code secret, ni numéro de carte." },
+  { icon: "badge-check", title: "Organisateurs vérifiés", text: "Une vérification d’identité est demandée avant tout retrait de fonds. Les pages vérifiées affichent un badge." },
+  { icon: "chart", title: "Transparence de la collecte", text: "Montant collecté, objectif et nombre de soutiens sont visibles publiquement. Pas de zone d’ombre." },
+  { icon: "eye-off", title: "Dons anonymes réels", text: "Un don anonyme n’affiche ni ton nom ni ton numéro sur la page publique, ni dans la liste des soutiens." },
+  { icon: "flag", title: "Signalement et modération", text: "Chaque page peut être signalée. L’équipe examine et peut suspendre une cagnotte ou bloquer un retrait suspect." },
+  { icon: "ticket-check", title: "Billets infalsifiables", text: "Chaque billet a un code unique, valable une seule fois. Un billet déjà scanné est refusé à l’entrée." },
 ];
 
 export const PAYMENT_METHODS = ["MTN Mobile Money", "Moov Money", "Celtiis Cash", "Orange Money", "Wave", "Carte bancaire (Visa, Mastercard)"];
@@ -114,10 +116,10 @@ export const FLOW_DONOR = [
 ];
 
 export const AUDIENCES = [
-  { icon: "👨‍👩‍👧", title: "Familles et proches", text: "Santé, deuil, mariage, scolarité : rassemble ton entourage au même endroit." },
-  { icon: "🤝", title: "Associations et clubs", text: "Finance un projet, du matériel ou une tournée avec une page claire et transparente." },
-  { icon: "🎤", title: "Artistes et organisateurs", text: "Vends tes billets, contrôle les entrées, oublie les tickets papier et les faux." },
-  { icon: "🎓", title: "Écoles et jeunes", text: "Un voyage, un projet étudiant, un gala : collecte et billetterie dans un seul outil." },
+  { icon: "family", title: "Familles et proches", text: "Santé, deuil, mariage, scolarité : rassemble ton entourage au même endroit." },
+  { icon: "handshake", title: "Associations et clubs", text: "Finance un projet, du matériel ou une tournée avec une page claire et transparente." },
+  { icon: "mic", title: "Artistes et organisateurs", text: "Vends tes billets, contrôle les entrées, oublie les tickets papier et les faux." },
+  { icon: "graduation", title: "Écoles et jeunes", text: "Un voyage, un projet étudiant, un gala : collecte et billetterie dans un seul outil." },
 ];
 
 export const COMPARE_COLS = ["Collectes informelles (WhatsApp, virements)", "Plateformes internationales", "Rallyo"];
@@ -132,19 +134,17 @@ export const COMPARE_ROWS: { label: string; cells: { v: "yes" | "mid" | "no"; t:
 ];
 
 export const PROBLEMS = [
-  { icon: "🧾", title: "La preuve par capture d’écran", text: "Chacun envoie sa preuve de transfert. Personne ne sait combien a vraiment été collecté." },
-  { icon: "📉", title: "La confiance qui s’érode", text: "Sans transparence, les donateurs hésitent, surtout quand ils sont loin ou ne connaissent pas l’organisateur." },
-  { icon: "🎫", title: "Des billets papier faciles à copier", text: "Faux billets, doublons, files d’attente : le contrôle à l’entrée est lent et peu fiable." },
-  { icon: "🌍", title: "Des outils pensés ailleurs", text: "Frais en devises, paiement par carte uniquement, interface sans les habitudes locales." },
+  { icon: "receipt", title: "La preuve par capture d’écran", text: "Chacun envoie sa preuve de transfert. Personne ne sait combien a vraiment été collecté." },
+  { icon: "trend-down", title: "La confiance qui s’érode", text: "Sans transparence, les donateurs hésitent, surtout quand ils sont loin ou ne connaissent pas l’organisateur." },
+  { icon: "ticket", title: "Des billets papier faciles à copier", text: "Faux billets, doublons, files d’attente : le contrôle à l’entrée est lent et peu fiable." },
+  { icon: "globe", title: "Des outils pensés ailleurs", text: "Frais en devises, paiement par carte uniquement, interface sans les habitudes locales." },
 ];
 
 export const PRICING = [
-  { label: "Cagnotte", amount: "3–5 %", small: "par collecte", items: ["Prélevé automatiquement sur chaque contribution", "Aucun frais fixe, aucun frais d’inscription", "Frais du prestataire Mobile Money en sus"], highlight: false, soon: false },
-  { label: "Billetterie", amount: "5–8 %", small: "par billet vendu", items: ["Inclut e-billets QR et contrôle d’accès", "Aucun coût fixe pour l’organisateur", "Frais du prestataire Mobile Money en sus"], highlight: true, soon: false },
+  { label: "Cagnotte", amount: FEE_MAX_RATE + " → " + FEE_MIN_RATE + " %", small: "dégressif", items: ["Plus tu collectes, plus le taux baisse", "Aucun frais fixe, aucun frais d’inscription", "Frais du prestataire Mobile Money en sus"], highlight: false, soon: false },
+  { label: "Billetterie", amount: FEE_MAX_RATE + " → " + FEE_MIN_RATE + " %", small: "dégressif", items: ["Inclut e-billets QR et contrôle d’accès", "Même grille dégressive que les cagnottes", "Frais du prestataire Mobile Money en sus"], highlight: true, soon: false },
   { label: "Rallyo Pro", amount: "Bientôt", small: "abonnement", items: ["Pour les organisateurs réguliers", "Commission réduite et statistiques avancées", "Tarif communiqué au lancement"], highlight: false, soon: true },
 ];
-
-export const FEE_RATES = { cagnotte: [3, 5], billetterie: [5, 8] } as const;
 
 export type FaqItem = { q: string; a: string };
 export type FaqGroup = { category: string; items: FaqItem[] };
@@ -178,7 +178,7 @@ export const FAQ: FaqGroup[] = [
     category: "Paiements et frais",
     items: [
       { q: "Quels moyens de paiement sont acceptés ?", a: "Le Mobile Money (MTN, Moov, Celtiis, Orange Money, Wave selon ton pays) et la carte bancaire. La liste exacte dépend de ton pays et s’élargit au fil du lancement." },
-      { q: "Combien coûte Rallyo ?", a: "L’inscription est gratuite. Rallyo prélève une commission à l’usage : environ 3 à 5 % pour une cagnotte et 5 à 8 % pour la billetterie, hors frais du prestataire de paiement. Détails et simulateur sur la page Tarifs." },
+      { q: "Combien coûte Rallyo ?", a: "L’inscription est gratuite. Rallyo prélève une commission uniquement sur ce que tu collectes, avec un taux dégressif : " + FEE_MAX_RATE + " % sur les premières tranches, jusqu’à " + FEE_MIN_RATE + " % sur les grosses collectes. Les frais du prestataire de paiement s’ajoutent. Détails et simulateur sur la page Tarifs." },
       { q: "Comment retirer mes fonds ?", a: "Depuis ton espace, vers ton Mobile Money ou ton compte bancaire, après vérification de ton identité." },
     ],
   },

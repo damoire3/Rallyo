@@ -83,15 +83,20 @@ Montants en **entiers FCFA**. Sécurité par **Row Level Security** ; paiements 
 ## 6. Modèle économique (à confirmer)
 
 Commission à l'usage, inscription gratuite :
-- Cagnotte : **3–5 %**
-- Billetterie : **5–8 %**
+- **Grille dégressive en tranches progressives**, identique pour cagnottes et billetterie (source unique : `src/lib/fees.ts`). Chaque tranche est facturée à son propre taux :
+  - jusqu'à 100 000 FCFA : **10 %**
+  - de 100 001 à 500 000 : **8 %**
+  - de 500 001 à 1 000 000 : **6 %**
+  - de 1 000 001 à 2 500 000 : **4 %**
+  - au-delà de 2 500 000 : **3 %**
+- Taux moyen réel : 10 % à 100 000 FCFA, 8,4 % à 500 000, 7,2 % à 1 M, 5,3 % à 2,5 M, 4,1 % à 5 M, 3,6 % à 10 M (il tend vers 3 % sans l'atteindre)
 - Frais du prestataire Mobile Money en sus
 - Piste future : abonnement « Pro » pour organisateurs réguliers (commission réduite)
 
 ## 7. Points à valider avant mise en ligne
 
 Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspondre à la réalité.
-1. Taux de commission exacts (3–5 % et 5–8 %).
+1. Grille de frais : taux de 10 % et 3 % fixés par le porteur du projet ; **seuils et taux intermédiaires (8 / 6 / 4 %) proposés, à valider**. Vérifier aussi que 3 % couvre les frais du prestataire Mobile Money. Comparer avec la concurrence (chiffres Tikerama : 10 % billets, 5 % cotisations — non vérifiés).
 2. Politique si l'objectif n'est pas atteint (fonds versés au créateur ?).
 3. Délai de retrait annoncé et vérification d'identité des organisateurs.
 4. Liste des moyens de paiement réellement disponibles par pays.
@@ -112,3 +117,4 @@ Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspo
 | 2026-10-02 | Hero repris de `rallyo-pw@` (texte + pop-ups à droite) ; vitrine « Ça se passe chez nous » = cartes-billets branchées au back, 13 max, tri par popularité, repli sur photos |
 | 2026-10-02 | Popularité calculée **côté base** (fonction SQL `SECURITY DEFINER`, agrégats uniquement) : les billets restent illisibles publiquement |
 | 2026-10-02 | Pages de détail et paiement : données de démo d'abord (`c1`, `e1`…), puis Supabase pour les UUID, via `src/lib/repo.ts` (mêmes types, vues inchangées) ; lecture publique par fonctions SQL `campaign_public` / `event_public` (migration `0003`) |
+| 2026-10-02 | Frais : grille dégressive de 10 % à 3 %, en **tranches progressives** (la commission ne baisse jamais quand le montant monte), même grille cagnotte et billetterie |
