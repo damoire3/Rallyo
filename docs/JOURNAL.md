@@ -66,7 +66,8 @@ $1
 | Profil | `/app/profil` | ✅ données de démo |
 | Détail cagnotte | `/app/cagnottes/[id]` | ✅ démo + Supabase (UUID), non testé sur vraie base |
 | Détail évènement | `/app/evenements/[id]` | ✅ démo + Supabase (UUID), non testé sur vraie base |
-| Paiement | `/app/paiement` | ⚠️ simulé (prestataire non choisi) |
+| Paiement | `/app/paiement` | ⚠️ simulé (FedaPay choisi, intégration à faire : CDC §20) |
+| Page de présentation (couverture, galerie, sections, lien partageable) | `/e/[slug]`, `/c/[slug]` (proposé) | ⏳ spécifiée (CDC §19), non démarrée ; dépend de l'authentification |
 | Connexion | `/app/connexion` | ⚠️ maquette, authentification non faite |
 
 ### Checklist — API
@@ -75,7 +76,7 @@ $1
 | `/api/contact` | POST | ✅ testée (validation, anti-robots, limite 5 / 10 min) ; 503 tant que Supabase n'est pas configuré |
 | Cagnottes, évènements, billets, commandes, retraits | — | ⏳ à définir avec les parcours A / B / C (spécification V1) |
 | Authentification (OTP téléphone, e-mail) | — | ⏳ |
-| Webhook du prestataire de paiement | — | ⏳ (prestataire à choisir) |
+| Webhook de paiement | — | ⏳ FedaPay choisi ; à faire après l'auth, le schéma V1 et une URL publique (CDC §20.5) |
 
 ### Checklist — Base de données (Supabase, projet `my-portos`)
 | Élément | Statut |
@@ -98,7 +99,10 @@ $1
 - [ ] Définir `NEXT_PUBLIC_SITE_URL` (adresse publique du site) quand le domaine existe
 - [ ] Renseigner les coordonnées de contact (`NEXT_PUBLIC_CONTACT_EMAIL / WHATSAPP / PHONE / HOURS`)
 - [x] Grille de frais **tranchée : 10 % → 3 %**, en tranches progressives (un seul fichier : `src/lib/fees.ts`)
-- [ ] Choisir le prestataire Mobile Money (CinetPay, FedaPay, PayDunya, Flutterwave…)
+- [x] Prestataire de paiement : **FedaPay** (choisi par le porteur le 2026-10-03)
+- [ ] Créer un compte FedaPay et récupérer les **clés de test (sandbox)** — cahier des charges §20.6
+- [ ] Poser à FedaPay les questions du §20 (tarif des cartes, pays ouverts, remboursements, versements, montant minimum, signature du webhook) et **reconfirmer les tarifs**
+- [ ] Trancher le §20.3 : le coût FedaPay (jusqu'à 4 %) dépasse la commission Rallyo sur les grosses collectes (≈ 5 M F et plus) pour Coris, BMO et MTN Côte d'Ivoire
 - [ ] Fournir le lien de **Ticketmania** (tarifs introuvables) pour compléter la comparaison
 - [ ] Faire le contrôle visuel de la landing avec `npm run dev` (ordinateur + mobile)
 - [ ] Répondre aux décisions ouvertes du cahier des charges (§16)
@@ -114,11 +118,25 @@ $1
 
 ## 1. Tableau de bord
 
+### 📥 Demandes du porteur (registre — 2026-10-03)
+| # | Demande | Statut | Qui |
+|:-:|---|:-:|---|
+| 1 | **Frais : 5 % pour Rallyo + le pourcentage de FedaPay en plus, pour tout** (remplace la grille progressive 10 % → 3 %). *Hypothèse retenue faute de réponse : montant **déduit des recettes de l'organisateur** (décision du 2026-10-02), pas ajouté au prix payé par l'acheteur. À confirmer.* | 🔄 EN COURS | Claude |
+| 2 | **Appli : les champs sont trop espacés entre eux** | 🔄 EN COURS | Claude |
+| 3 | **Terminer le travail de l'autre IA** : textes publics selon les règles de fonds (CDC §10), pages légales (mentions légales, CGU, confidentialité), `.gitattributes` | ⏳ à reprendre dès son ✅ ou sur ordre du porteur (un seul intervenant à la fois) | Claude (reprise) |
+| 4 | **Terminer le travail du prompt « pages de présentation »** (CDC §19) : d'abord les pages publiques avec données de démo (couverture, galerie, sections, aperçu, partage) ; l'éditeur et l'envoi de photos viendront avec l'authentification et le stockage d'images | ⏳ après le point 3 | Claude |
+| 5 | Prestataire de paiement : **FedaPay**, intégration « après » | ✅ consigné (CDC §20) ; intégration plus tard | — |
+| 6 | Ajouter les nouveautés au cahier des charges (pages de présentation, FedaPay) | ✅ fait | Claude |
+| 7 | Règle de travail : **notifier avant et après** chaque tâche, travailler **à tour de rôle** | ✅ en vigueur (section 0) | tous |
+| 8 | Base de données : **rester sur Supabase** (projet `my-portos`) | ✅ | — |
+
 ### 🔄 En cours
+- **🔄 EN COURS — Claude, demandes 1 et 2 (2026-10-03).** (1) Frais « 5 % + FedaPay » : `src/lib/fees.ts`, `src/components/site/fee-calculator.tsx`, page `/tarifs`, `docs/CAHIER_DES_CHARGES.md` (§6, §8, §18, §20.3), tests éventuels. **`src/lib/site-data.ts` est verrouillé par l'autre IA** : je ne l'édite pas ; les lignes de tarifs/FAQ qui y mentionnent des taux sont listées dans mon entrée de fin pour être corrigées par elle (ou par moi à la reprise du point 3). (2) Espacement des champs de l'appli : composants et formulaires sous `src/components/` et `src/app/app/` (liste exacte dans mon entrée de fin). **Aucune migration, aucun fichier de l'autre IA.**
 - **Contrôle visuel** (desktop + mobile) de l'ensemble de la landing : hero v2, galerie, icônes Lucide, simulateur de frais, page Contact — avec `npm run dev`. Personne ne l'a encore fait dans un navigateur (les vérifications faites jusqu'ici sont `tsc`, `build` et des requêtes HTTP).
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
 
 ### ✅ Fait
+- **✅ TERMINÉ (2026-10-03) — Cahier des charges : pages de présentation (§19) et FedaPay (§20)**, plus mises à jour de §4, §8, §13.3, §13.7, §13.9, §17 et §18. Documentation uniquement : aucun code, aucune migration. Voir l'entrée chronologique du 2026-10-03 « Claude — Cahier des charges ».
 - **✅ TERMINÉ (2026-10-03) — Migrations Supabase adaptées au schéma `rallyo`** (reprise par Claude du travail inachevé de l'autre IA, sur décision du porteur). Approche : tables dans `rallyo` (non exposé), fonctions `SECURITY DEFINER` préfixées `rallyo_` dans `public`. **Contrôles :** syntaxe validée par l'analyseur officiel de PostgreSQL ; **37 tests réussis** sur un vrai PostgreSQL (tables inaccessibles à `anon` / `authenticated`, fonctions correctes, formulaire de contact protégé, RLS, `search_path`) ; `tsc` 0 erreur ; build 28 pages ; route `/api/contact` testée (400 / 413 / 429 / 503, robots ignorés). **Rien n'est appliqué sur Supabase** : c'est au porteur d'exécuter les migrations.
 - **✅ TERMINÉ — Choix du projet Supabase : `my-portos`** (ex-« Drop » abandonné). Projet actif, 0 utilisateur, aucune collision ; isolation par le schéma `rallyo`. (Détails des décisions et vérifications conservés dans le journal chronologique.)
 - **✅ TERMINÉ (2026-10-03) — Checklist d'avancement au format SIVEP** : règle critique « avant / après », format d'entrée, index des fichiers critiques et tableaux d'état (site, appli, API, base de données, tâches du porteur, tests après migrations) dans la section 0 de ce fichier. Aucun fichier de code touché. **Reste :** tenir ces tableaux à jour à chaque tâche terminée.
@@ -192,6 +210,19 @@ Ordre **proposé** :
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-03 — Claude — Cahier des charges : pages de présentation et FedaPay
+**Statut :** ✅ TERMINÉ
+**Fichiers touchés :** `docs/CAHIER_DES_CHARGES.md` (ajouts), `docs/JOURNAL.md` (checklists et cette entrée). **Aucun code, aucune migration.**
+**Description :**
+- **Contexte :** demande du porteur (« ajoute dans le cahier des charges », « je vais utiliser FedaPay après »). À mon arrivée, l'autre IA avait déjà terminé et testé les migrations (commit `363f57f`) et travaillait sur les textes publics et les pages légales : **je n'ai pas touché à ses fichiers**.
+- **§19 Pages de présentation :** chaque évènement et chaque cagnotte a une page publique partageable (couverture, galerie, sections, aperçu, publication). Traduction en exigences du texte fourni par le porteur, **adaptée à l'architecture réelle** : tables dans `rallyo` (non exposé) + fonctions `rallyo_*`, bucket public d'images distinct du bucket privé des pièces d'identité, pas de HTML brut, URL proposées `/e/[slug]` et `/c/[slug]` hors du cadre `/app`. Les choix techniques sont marqués « à valider ».
+- **§20 FedaPay** (sources officielles fedapay.com et docs-v1.fedapay.com, consultées le 2026-10-03) : 5 pays, Mobile Money + cartes, sandbox/live, webhooks, reversement sous 3 jours ouvrés. Tarifs publiés : **1,8 %** (Bénin : MTN, Moov, Celtiis), **4 %** (Coris, BMO, MTN Côte d'Ivoire), frais fixes de 150 à 2 500 F par versement. Intégration proposée (serveur uniquement, webhook idempotent via `provider_ref`, montants recalculés côté serveur).
+- **Mises à jour :** §4 (stack), §8 (2 décisions), §13.3 / §13.7 / §13.9 (renvois), §17 (prestataire), §18 (2 écarts).
+**⚠️ Découverte importante (à trancher) :** avec nos tranches progressives (10 % → 3 %), le **taux réel payé** par l'organisateur vaut 5,28 % à 2,5 M F et **4,14 % à 5 M F**, puis passe **sous 4 % au-delà d'environ 5,7 M F**. Pour les moyens à 4 % (Coris, BMO, MTN Côte d'Ivoire), la **marge devient quasi nulle puis négative** sur les grosses collectes, avant les frais fixes de versement. Avec les moyens à 1,8 % la marge reste confortable. Détail et options : CDC §20.3. `fees.ts` **n'a pas été modifié**.
+**Points à vérifier :** la page de tarifs FedaPay semblait datée d'environ onze mois ; tarif des **cartes bancaires** non trouvé ; pays réellement ouverts, remboursements, versements, montant minimum et méthode de signature du webhook à confirmer auprès de FedaPay.
+**Observation (non corrigée, entrée de l'autre IA en cours) :** le titre de son entrée ci-dessous affiche un `$1` parasite à la place de « ### 2026-10-03 — Claude — … » (même défaut que celui déjà corrigé plus tôt : remplacement de texte avec un `$1` littéral). À réparer par son auteur à la fin de son tour.
+**Reste :** rien pour ce tour. Prochaines étapes qui en découlent : authentification, schéma V1 (commandes), puis pages de présentation, puis intégration FedaPay.
 
 ### Archive — décisions Supabase de l'autre IA et du porteur (déplacées depuis « En cours »)
 - (archive, ex-« En cours ») **▶️ DÉBUT — Utiliser le projet Supabase « Drop » existant pour Rallyo** (décision du porteur, 2026-10-02). **Analyse faite :** le dossier `Desktop\Drop\client` n'utilise pas encore Supabase (aucune dépendance, aucun `.env`, aucun appel de table ; seul un commentaire prévoit d'y brancher le stockage d'images). Le contenu en ligne du projet n'est pas lisible (le connecteur Supabase n'expose aucun outil). **Décision technique : isoler Rallyo dans son propre schéma Postgres `rallyo`** (pas de collision possible avec Drop). Étape 2 en cours : adapter `supabase/migrations/0001`–`0005` (`public.` → `rallyo.`, types et fonctions dans le schéma), `src/lib/supabase-rest.ts` et `src/app/api/contact/route.ts` (en-tête `Content-Profile: rallyo`), `.env.example`. **Aucune migration appliquée à la base.** ⚠️ Merci de ne pas toucher à ces fichiers en parallèle.

@@ -74,7 +74,7 @@ export const STEPS_PIN = [
   { n: "01", title: "Crée ta page", text: "Titre, histoire, objectif ou prix du billet, photo de couverture. Pas besoin d’être développeur.", bg: IMAGES.step1Bg },
   { n: "02", title: "Partage le lien", text: "WhatsApp, Facebook, Instagram : chaque page a un aperçu soigné avec la jauge de progression.", bg: IMAGES.step2Bg },
   { n: "03", title: "Ils paient en Mobile Money", text: "Les contributeurs paient en quelques secondes, avec ou sans compte, en public ou en anonyme.", bg: IMAGES.step3Bg },
-  { n: "04", title: "Retire ou scanne", text: "Retire les fonds vers ton Mobile Money, ou scanne les QR codes des billets à l’entrée de ton évènement.", bg: IMAGES.step4Bg },
+  { n: "04", title: "Reçois ou scanne", text: "Reçois les fonds de ta cagnotte à la fin de la collecte (ou par retrait anticipé), reçois les recettes de ta billetterie et scanne les QR codes à l’entrée.", bg: IMAGES.step4Bg },
 ];
 
 export const CASES = [
@@ -85,10 +85,10 @@ export const CASES = [
 
 export const TRUST_CARDS = [
   { icon: "lock", title: "Aucune donnée bancaire chez nous", text: "Les paiements sont traités par des prestataires de paiement agréés. Rallyo ne stocke ni code secret, ni numéro de carte." },
-  { icon: "badge-check", title: "Organisateurs vérifiés", text: "Une vérification d’identité est demandée avant tout retrait de fonds. Les pages vérifiées affichent un badge." },
-  { icon: "chart", title: "Transparence de la collecte", text: "Montant collecté, objectif et nombre de soutiens sont visibles publiquement. Pas de zone d’ombre." },
+  { icon: "badge-check", title: "Organisateurs vérifiés", text: "Chaque organisateur enregistre son identité et son moyen de recevoir l’argent. Les pages vérifiées affichent un badge." },
+  { icon: "chart", title: "Transparence et fonds réservés", text: "Montant collecté, objectif et nombre de soutiens sont publics. L’argent d’une cagnotte est réservé jusqu’à la fin de la collecte ou de l’objectif ; un retrait anticipé passe par une demande contrôlée." },
   { icon: "eye-off", title: "Dons anonymes réels", text: "Un don anonyme n’affiche ni ton nom ni ton numéro sur la page publique, ni dans la liste des soutiens." },
-  { icon: "flag", title: "Signalement et modération", text: "Chaque page peut être signalée. L’équipe examine et peut suspendre une cagnotte ou bloquer un retrait suspect." },
+  { icon: "flag", title: "Signalement et modération", text: "Chaque page peut être signalée à l’équipe, qui peut suspendre une cagnotte ou bloquer un retrait suspect." },
   { icon: "ticket-check", title: "Billets infalsifiables", text: "Chaque billet a un code unique, valable une seule fois. Un billet déjà scanné est refusé à l’entrée." },
 ];
 
@@ -96,18 +96,18 @@ export const PAYMENT_METHODS = ["MTN Mobile Money", "Moov Money", "Celtiis Cash"
 
 export const FLOW_CAGNOTTE = [
   { title: "Crée ton compte", text: "Avec ton numéro de téléphone ou ton email. Moins d’une minute." },
-  { title: "Raconte ton histoire", text: "Titre, description, catégorie, objectif en FCFA et photo de couverture." },
-  { title: "Vérifie ton identité", text: "Nécessaire avant le premier retrait, pour protéger les donateurs." },
+  { title: "Raconte ton histoire", text: "Titre, description, catégorie, objectif en FCFA, photo de couverture et date de fin." },
+  { title: "Enregistre ton identité et ton moyen de réception", text: "Une pièce d’identité et ta carte bancaire ou ton compte Mobile Money, pour recevoir les fonds en toute sécurité. Les moyens de paiement sont enregistrés chez notre prestataire, pas chez Rallyo." },
   { title: "Partage ton lien", text: "Une page publique avec aperçu pour WhatsApp, avec jauge et compteur de soutiens." },
-  { title: "Retire tes fonds", text: "Vers ton Mobile Money ou ton compte bancaire, depuis ton espace." },
+  { title: "Reçois tes fonds", text: "L’argent est réservé jusqu’à la fin de la collecte ou jusqu’à l’objectif. Tu le reçois ensuite, ou tu demandes un retrait anticipé, vérifié avant le versement. Si l’objectif n’est pas atteint, tu gardes ce qui a été collecté." },
 ];
 
 export const FLOW_EVENT = [
-  { title: "Crée ton évènement", text: "Nom, lieu, date, prix du billet et nombre de places." },
+  { title: "Crée ton évènement", text: "Nom, lieu, date, prix du billet et nombre de places. Tu enregistres aussi ton identité et ton moyen de recevoir l’argent." },
   { title: "Publie la billetterie", text: "Ta page est en ligne, avec le nombre de billets restants." },
   { title: "Vends en Mobile Money", text: "Chaque acheteur reçoit son e-billet avec QR code juste après le paiement." },
   { title: "Scanne à l’entrée", text: "Chaque code ne fonctionne qu’une fois : les doublons sont refusés." },
-  { title: "Suis tes ventes", text: "Billets vendus, entrées validées, montant à retirer, en temps réel." },
+  { title: "Suis tes ventes et reçois tes recettes", text: "Billets vendus, entrées validées, recettes en temps réel. Tu choisis le versement : direct, ou différé jusqu’à une date que tu définis." },
 ];
 
 export const FLOW_DONOR = [
@@ -164,7 +164,8 @@ export const FAQ: FaqGroup[] = [
     items: [
       { q: "Comment créer une cagnotte ?", a: "Crée ton compte, renseigne le titre, ton histoire, l’objectif en FCFA et une photo, puis publie. Ta page est prête à être partagée en quelques minutes." },
       { q: "Puis-je faire un don anonyme ?", a: "Oui. Un don anonyme n’affiche ni ton nom ni ton numéro sur la page publique ni dans la liste des soutiens." },
-      { q: "Que se passe-t-il si l’objectif n’est pas atteint ?", a: "Le créateur peut clôturer sa cagnotte et retirer les fonds collectés, que l’objectif soit atteint ou non. Les règles précises seront détaillées dans nos conditions d’utilisation." },
+      { q: "Que se passe-t-il si l’objectif n’est pas atteint ?", a: "Tu gardes tout ce qui a été collecté. À la date de fin, même si l’objectif n’est pas atteint, le solde te revient, sous réserve des vérifications habituelles (identité et moyen de réception). Les conditions détaillées figureront dans nos conditions d’utilisation." },
+      { q: "Quand l’argent d’une cagnotte est-il disponible ?", a: "Les contributions sont réservées jusqu’à la fin de la collecte ou jusqu’à l’atteinte de l’objectif, selon la condition de clôture que tu as choisie. Ensuite, le solde éligible peut être retiré. Un retrait anticipé reste possible : tu en fais la demande, elle est contrôlée avant tout versement." },
     ],
   },
   {
@@ -172,6 +173,8 @@ export const FAQ: FaqGroup[] = [
     items: [
       { q: "Comment l’acheteur reçoit-il son billet ?", a: "Juste après le paiement, un e-billet avec QR code est disponible dans l’onglet Billets de l’appli." },
       { q: "Comment contrôler les entrées ?", a: "Tu scannes le QR code de chaque billet. Chaque code est unique et ne fonctionne qu’une fois : un billet déjà utilisé est refusé." },
+      { q: "Qui peut organiser un évènement ?", a: "Toute personne disposant d’un compte. Dans tous les cas, l’organisateur enregistre ses informations, une pièce d’identité et un moyen de recevoir l’argent (carte bancaire ou compte Mobile Money)." },
+      { q: "Quand l’organisateur reçoit-il l’argent des billets ?", a: "L’organisateur choisit entre deux modes : un versement direct, où les recettes éligibles lui sont transférées via le prestataire de paiement, ou un versement différé, où elles sont réservées jusqu’à une date ou une condition qu’il définit." },
       { q: "Un billet peut-il être remboursé ?", a: "En cas d’annulation de l’évènement, les acheteurs sont remboursés. Dans les autres cas, cela dépend de la politique de l’organisateur, indiquée sur sa page." },
     ],
   },
@@ -180,15 +183,16 @@ export const FAQ: FaqGroup[] = [
     items: [
       { q: "Quels moyens de paiement sont acceptés ?", a: "Le Mobile Money (MTN, Moov, Celtiis, Orange Money, Wave selon ton pays) et la carte bancaire. La liste exacte dépend de ton pays et s’élargit au fil du lancement." },
       { q: "Combien coûte Rallyo ?", a: "L’inscription est gratuite. Rallyo prélève une commission uniquement sur ce que tu collectes, avec un taux dégressif : " + FEE_MAX_RATE + " % sur les premières tranches, jusqu’à " + FEE_MIN_RATE + " % sur les grosses collectes. Les frais du prestataire de paiement s’ajoutent. Détails et simulateur sur la page Tarifs." },
-      { q: "Comment retirer mes fonds ?", a: "Depuis ton espace, vers ton Mobile Money ou ton compte bancaire, après vérification de ton identité." },
+      { q: "Qui paie les frais de Rallyo ?", a: "L’organisateur : la commission Rallyo est déduite de ses recettes. L’acheteur ou le contributeur paie le montant affiché, sans frais Rallyo ajoutés. Les éventuels frais du prestataire de paiement dépendent du moyen choisi." },
+      { q: "Comment retirer mes fonds ?", a: "Les fonds sont versés via notre prestataire de paiement, vers le moyen de réception que tu as enregistré (carte bancaire ou compte Mobile Money), une fois ton identité vérifiée. Pour une cagnotte, tu peux aussi demander un retrait anticipé : la demande est vérifiée, approuvée, puis versée, et tu suis chaque étape dans ton espace. Les fonds ne sont pas conservés sur un portefeuille Rallyo." },
     ],
   },
   {
     category: "Sécurité",
     items: [
-      { q: "Mon argent et mes données sont-ils protégés ?", a: "Les paiements sont traités par des prestataires agréés : Rallyo ne stocke aucune donnée bancaire. Tes informations personnelles ne sont jamais affichées publiquement." },
-      { q: "Comment les organisateurs sont-ils vérifiés ?", a: "Une vérification d’identité est demandée avant tout retrait. Les pages d’organisateurs vérifiés affichent un badge." },
-      { q: "Comment signaler une cagnotte suspecte ?", a: "Chaque page propose un bouton de signalement. L’équipe examine le cas et peut suspendre la page ou bloquer les retraits." },
+      { q: "Mon argent et mes données sont-ils protégés ?", a: "Les paiements sont traités par des prestataires agréés : Rallyo ne stocke aucune donnée bancaire. Tes informations personnelles ne sont jamais affichées publiquement, pas plus que les pièces d’identité fournies par les organisateurs." },
+      { q: "Comment les organisateurs sont-ils vérifiés ?", a: "Chaque organisateur enregistre une pièce d’identité et son moyen de recevoir l’argent. Une fois vérifiés, les organisateurs affichent un badge sur leurs pages." },
+      { q: "Comment signaler une cagnotte suspecte ?", a: "Écris-nous depuis la page Contact en choisissant « Signaler une cagnotte ou un évènement », et joins le lien de la page. L’équipe examine le cas et peut suspendre la page ou bloquer les retraits." },
     ],
   },
 ];

@@ -78,7 +78,7 @@ Application native, multi-devises, **remboursements automatiques** (la *demande*
 | Langage | **TypeScript 5.8** | Typage strict |
 | Animations | **GSAP** (landing uniquement) | ScrollTrigger, défilement horizontal épinglé |
 | Base de données / Auth | **Supabase** (PostgreSQL + RLS) | Schéma déjà écrit : `supabase/migrations/0001_init.sql` |
-| Paiement | Mobile Money via un agrégateur (FedaPay, Kkiapay ou CinetPay — **à choisir**) | Clés secrètes côté serveur, webhooks |
+| Paiement | Mobile Money via un agrégateur : **FedaPay** (choix du porteur, 2026-10-03 ; voir §20) | Clés secrètes côté serveur, webhooks |
 | Node | Recommandé : **22 LTS** (la machine a Node 25, version « Current ») | Stabilité |
 
 Règles : versions exactes (`save-exact`), pas de Turbopack en build, pas de bibliothèque instable.
@@ -139,6 +139,8 @@ $1
 | 2026-10-02 | ✅ **Frais supportés par l'organisateur** (commission déduite de ses recettes) |
 | 2026-10-02 | ✅ **Cagnotte sous l'objectif à la date de fin : le créateur garde tout ce qui a été collecté** |
 | 2026-10-02 | ✅ **Organisateur d'évènement : toute personne avec un compte**, qui enregistre **identité + moyen de recevoir l'argent** (carte bancaire ou compte Mobile Money), enregistré chez le prestataire (§10.9) |
+| 2026-10-03 | ✅ **Prestataire de paiement : FedaPay** (choix du porteur ; intégration à faire plus tard, après l'authentification et le schéma V1). Voir §20 : **le coût FedaPay est supérieur au palier de commission le plus bas pour certains moyens de paiement, point à trancher** |
+| 2026-10-03 | ✅ **Chaque évènement et chaque cagnotte a une page de présentation publique et partageable** (couverture, galerie, sections, bouton d'action), personnalisable simplement par son créateur. Voir §19 |
 
 
 ---
@@ -307,7 +309,7 @@ Header (Logo, Évènements, Cagnottes, Recherche, Créer, Connexion). Hero : « 
 Recherche + filtres (pays, ville, date, catégorie, prix, gratuit/payant, disponibilité) + tri (pertinents, plus récents, date la plus proche, prix). **Carte évènement :** image, catégorie, titre, date, lieu, billets vendus, « à partir de X FCFA », jauge de remplissage éventuelle.
 
 ### 13.3 Détail d'un évènement
-Grande image, titre, catégorie, organisateur, partager, favoris. Date et heure, lieu, **billets vendus / places disponibles / % vendu**, description. **Catégories de billets** (ex. Pass Standard 5 000 · VIP 15 000 · Premium 30 000, avec « N restants »). Dates de la vente (ouverture, fin). Profil public de l'organisateur. Bouton **Acheter un billet**.
+Grande image, titre, catégorie, organisateur, partager, favoris. Date et heure, lieu, **billets vendus / places disponibles / % vendu**, description. **Catégories de billets** (ex. Pass Standard 5 000 · VIP 15 000 · Premium 30 000, avec « N restants »). Dates de la vente (ouverture, fin). Profil public de l'organisateur. Bouton **Acheter un billet**. *(Cette page devient la « page de présentation » personnalisable de l'évènement : galerie, sections, lien partageable. Voir §19.)*
 
 ### 13.4 Achat d'un billet (5 étapes, parcours très court)
 1 **Billet** (quantité par catégorie, ± ) · 2 **Informations** (nom, prénom, téléphone, e-mail, selon l'évènement ; achat sans compte autorisé) · 3 **Récapitulatif** (ex. 2 × Standard 10 000 F, **total 10 000 F** : la commission Rallyo est déduite des recettes de l'organisateur, elle n'est pas ajoutée à l'acheteur ; l'exemple du document source, « frais 500 F, total 10 500 F », est écarté) · 4 **Paiement** (Mobile Money : MTN, Moov, autres selon pays ; carte Visa / Mastercard) · 5 **Confirmation** (voir, télécharger, recevoir par e-mail).
@@ -319,13 +321,13 @@ Marque Rallyo, évènement, **QR code**, titulaire, catégorie, date, ville, ré
 **Carte :** image, titre, **montant collecté / objectif**, **barre de progression et %**, nombre de contributeurs, jours restants.
 
 ### 13.7 Détail d'une cagnotte (page centrale côté collecte)
-Image, titre, créateur, catégorie, partager, signaler. **Montant très visible** (ex. 1 250 000 FCFA sur 2 000 000) + barre + « 62 % atteint ». **4 statistiques :** contributeurs, collectés, jours restants, objectif. Dates : créée le, fin prévue le. Bouton **Contribuer**. Histoire. **Contributions** récentes (selon confidentialité : nom, montant, ancienneté, « Anonyme »). **Mises à jour du créateur** (texte + photo éventuelle).
+Image, titre, créateur, catégorie, partager, signaler. **Montant très visible** (ex. 1 250 000 FCFA sur 2 000 000) + barre + « 62 % atteint ». **4 statistiques :** contributeurs, collectés, jours restants, objectif. Dates : créée le, fin prévue le. Bouton **Contribuer**. Histoire. **Contributions** récentes (selon confidentialité : nom, montant, ancienneté, « Anonyme »). **Mises à jour du créateur** (texte + photo éventuelle). *(Cette page devient la « page de présentation » personnalisable de la cagnotte : galerie, sections, lien partageable. Voir §19.)*
 
 ### 13.8 Contribuer
 Montant (10 000 · 25 000 · 50 000 ou libre) → identité (☑ afficher mon nom / ☐ anonyme) → moyen de paiement (Mobile Money, carte) → récapitulatif → « Contribuer X FCFA ».
 
 ### 13.9 Créer une cagnotte : assistant en 5 étapes
-01 **Informations** (titre, catégorie, objectif, devise, bénéficiaire) · 02 **Présentation** (couverture, description, histoire, pourquoi) · 03 **Durée** (début, fin, condition de clôture §10.2) · 04 **Retraits** (versement à la fin / retrait anticipé autorisé, informations du bénéficiaire) · 05 **Prévisualisation** (aperçu exact du public) → Enregistrer comme brouillon ou Publier.
+01 **Informations** (titre, catégorie, objectif, devise, bénéficiaire) · 02 **Présentation** (couverture, galerie, description, histoire, pourquoi, sections : détail au §19) · 03 **Durée** (début, fin, condition de clôture §10.2) · 04 **Retraits** (versement à la fin / retrait anticipé autorisé, informations du bénéficiaire) · 05 **Prévisualisation** (aperçu exact du public) → Enregistrer comme brouillon ou Publier.
 
 ### 13.10 Gestion d'une cagnotte
 Résumé (montant, %, contributeurs, jours restants). Actions : modifier, partager, publier une mise à jour, voir les contributions, demander un retrait, paramètres, terminer. **Onglets :** Vue d'ensemble · Contributions · Retraits · Mises à jour · Paramètres.
@@ -394,7 +396,7 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 
 - Dans l'**UMOA**, les services de paiement sont encadrés (document : Instruction n°001-01-2024 de la BCEAO) ; les établissements de paiement doivent être agréés ou enregistrés selon leur activité, et la BCEAO publie la liste des établissements agréés.
 - Document, pour le **Bénin** (liste au 28 février 2026) : MTN Mobile Money, Moov Money et ID Money figurent parmi les établissements de monnaie électronique.
-- **Conséquences de conception :** Rallyo ne doit pas se positionner comme détenteur des fonds (§10.1) ; il faut choisir un **prestataire agréé par marché visé** (agrégateur FedaPay, Kkiapay ou CinetPay : à choisir, §4) ; les statuts « réservé », « en vérification », « versé » doivent refléter l'état réel chez le prestataire, pas un solde interne.
+- **Conséquences de conception :** Rallyo ne doit pas se positionner comme détenteur des fonds (§10.1) ; il faut choisir un **prestataire agréé par marché visé** (**FedaPay**, choix du porteur du 2026-10-03, voir §20 ; ses pays couverts sont à confronter au pays de lancement, §16 question 2) ; les statuts « réservé », « en vérification », « versé » doivent refléter l'état réel chez le prestataire, pas un solde interne.
 - Obligations probables à instruire : vérification d'identité des bénéficiaires, conservation des traces de transaction, CGU et politique de remboursement.
 
 ## 18. Écarts avec l'existant et chantiers induits
@@ -417,3 +419,123 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | **Textes publics** | FAQ « Que se passe-t-il si l'objectif n'est pas atteint ? » et « Comment retirer mes fonds ? » décrivent un retrait libre | Fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé | **Réécrire la FAQ, `/securite` et `/comment-ca-marche`** une fois les règles du §10 validées |
 | **Frais** | Commission déduite de l'organisateur | Exemple d'achat avec frais ajoutés à l'acheteur | **Tranché : on garde la commission déduite de l'organisateur.** Exemple du document écarté (§13.4). Aucun changement de `fees.ts` |
 | **Slogan / hero** | « Rassemble. Célèbre. Soutiens. » | « Les moments commencent ici. » (proposé) | Arbitrage §16 |
+| **Pages de présentation** | Pages de détail simples (image, texte, bouton), non personnalisables, dans le cadre téléphone de `/app` | Page publique partageable par évènement / cagnotte : couverture, galerie, sections, aperçu, publication (§19) | Tables de présentation et de médias, stockage d'images, éditeur simple, pages publiques hors du cadre `/app`. **Dépend de l'authentification** |
+| **Paiement** | Simulé (`/app/paiement`) | FedaPay : transaction, paiement Mobile Money, webhook, versements (§20) | Routes serveur, webhook idempotent, table des commandes, statuts réels du prestataire. **Dépend de l'authentification, du schéma V1 et d'une URL publique** |
+
+
+---
+
+# AJOUTS DU 2026-10-03
+
+## 19. Pages de présentation (vitrines) des évènements et des cagnottes
+
+> **Statut : spécifié, non démarré.** Origine : demande du porteur (2026-10-03). **Dépend de** l'authentification (le propriétaire doit pouvoir modifier sa page), du stockage d'images et du formulaire de création réel (§13.9). Les choix techniques marqués 🟡 sont des propositions à valider.
+
+### 19.1 Objectif
+Chaque évènement et chaque cagnotte possède sa **propre mini-page publique**, présentable et partageable (WhatsApp, réseaux sociaux), que son créateur personnalise **simplement** : une belle couverture, des photos, du texte, quelques sections, les informations pratiques et un bouton d'action. Cela étend les pages de détail des §13.3 et §13.7 et l'étape « Présentation » de l'assistant (§13.9) ; ce n'est pas une troisième page à côté.
+**Principe : un système de « page de présentation » simple et élégant, pas un constructeur de site.** Un créateur doit pouvoir obtenir quelque chose de beau en ne remplissant presque rien.
+
+### 19.2 Contenu de la page publique
+**Commun :** image de couverture · titre · accroche courte · description · galerie de photos · sections de présentation · informations complémentaires · informations de l'organisateur (nom public, §10.9) · bouton d'action principal · bouton **Partager / Copier le lien**.
+**Évènement :** date et heure, lieu, catégories de billets avec prix et « N restants » (§13.3) · bouton **Acheter un billet**.
+**Cagnotte :** objectif, montant collecté, barre et %, contributeurs, jours restants (§13.7) · bouton **Contribuer**.
+*Hors V1 :* vidéo hébergée (un lien YouTube / Vimeo pourra être ajouté plus tard), thèmes multiples, domaine personnalisé, commentaires.
+
+### 19.3 Création et modification par le créateur
+- **Parcours évènement :** Informations → Billetterie → Présentation → Prévisualisation → Publier. **Parcours cagnotte :** Informations → Objectif → Présentation → Prévisualisation → Publier (cohérent avec les 5 étapes du §13.9).
+- **Étape « Présentation » :** choisir la couverture · ajouter des photos (envoi, **suppression**, **réorganisation**, choix de l'image principale) · titre et accroche · description avec mise en forme limitée (gras, listes, liens) · **sections** (titre + texte ; liste de type « programme » ; liens) · **Prévisualiser** (rendu identique à la page publique) · **Publier / Dépublier**.
+- **Peu d'obligatoire :** seuls le titre et la couverture comptent ; sans couverture, une image par défaut aux couleurs de la catégorie. Les sections et la galerie sont facultatives.
+- **Plus tard :** bouton « Modifier ma page » depuis la gestion de l'évènement / de la cagnotte (§13.10). Les changements sont enregistrés ; une page dépubliée disparaît du public (404) mais reste modifiable.
+- 🟡 Limites proposées : 10 photos par page, 8 sections, formats JPEG / PNG / WebP, taille maximale par image à fixer.
+
+### 19.4 URL, partage et aperçu sur les réseaux
+- 🟡 **Pages publiques partageables hors du cadre `/app`** (elles doivent être indexables et ne pas s'afficher dans un cadre de téléphone) : `/e/[slug]` pour un évènement, `/c/[slug]` pour une cagnotte. Les colonnes `slug` (uniques) existent déjà dans le schéma.
+- Les pages `/app/evenements/[id]` et `/app/cagnottes/[id]` actuelles sont reprises par ces pages (ou y redirigent) : **une seule source de vérité**, à trancher à l'implémentation.
+- **Aperçu de partage (Open Graph / Twitter)** : couverture, titre, accroche. Bouton « Copier le lien » et partage WhatsApp. Pages publiées intégrées au `sitemap.xml`.
+
+### 19.5 Architecture 🟡
+Un seul concept, **« Page de présentation »**, rattaché soit à un évènement, soit à une cagnotte, avec des composants communs (couverture, galerie, sections, bouton d'action) et seulement le bloc de chiffres / d'action qui change :
+```
+PresentationPage ── Évènement  (billets, date, lieu)
+                 └─ Cagnotte   (objectif, jauge, contributeurs)
+```
+**Données (nouvelle migration `0006`+, même schéma que l'existant : tables dans `rallyo`, jamais exposées) :**
+- `rallyo.presentation_pages` : identifiant, type (`event` / `campaign`) et identifiant de l'élément (un seul par élément), couverture, accroche, texte, `sections` (JSON : seul endroit où le JSON est justifié, contenu libre et ordonné), statut (`draft` / `published`), dates.
+- `rallyo.presentation_media` : page, chemin du fichier, ordre, texte alternatif, indicateur « couverture ».
+- **Lecture publique par une fonction `SECURITY DEFINER` préfixée `rallyo_` dans `public`** qui ne renvoie que les pages **publiées** et leurs champs publics (même méthode que les migrations 0002 à 0005).
+- **Écriture réservée au propriétaire** (authentification requise ; règles de sécurité par ligne et contrôle côté serveur).
+
+### 19.6 Images
+- **Supabase Storage** : un **bucket public** pour les couvertures et galeries (distinct du **bucket privé** des pièces d'identité, §10.9 et §18).
+- Redimensionnement et compression avant envoi ; contrôle du type réel et de la taille **côté serveur** (ne pas se fier au navigateur) ; images servies optimisées (`next/image`, domaine du stockage à autoriser).
+- ⚠️ Le projet Supabase `my-portos` est **partagé avec le portfolio** et en plan gratuit : **vérifier le quota de stockage** avant d'ouvrir l'envoi de photos, et prévoir la suppression des fichiers orphelins.
+
+### 19.7 Sécurité et modération
+- Seul le **propriétaire** (ou une personne ayant la permission) modifie la page ; tout autre accès en écriture est refusé.
+- Une page non publiée n'est **jamais** lisible publiquement ; une page publique n'expose **que** les champs prévus (jamais téléphone, e-mail, pièce d'identité, billets ni contributions individuelles).
+- Texte : **aucun HTML brut accepté** (mise en forme limitée et nettoyée, pour éviter l'injection de code) ; liens externes avec `rel="noopener noreferrer nofollow"`.
+- Pages et images **signalables** (§14) ; modération depuis le back-office (§18).
+
+### 19.8 Qualité attendue
+Mobile d'abord (tablette et ordinateur soignés) · images paresseuses avec texte alternatif · animations légères qui respectent « réduire les animations » · pas de nouvelle dépendance lourde · design cohérent avec l'existant, avec comme **référence d'ambiance** l'image mobile fournie par le porteur (composition, cartes, boutons, rapport image / information) **sans la copier**.
+
+## 20. Paiement avec FedaPay
+
+> **Statut : prestataire choisi par le porteur (2026-10-03). Intégration à faire plus tard**, après l'authentification, le schéma V1 (commandes, retraits) et la mise en ligne d'une URL publique (nécessaire au webhook). **Aucun code de paiement n'existe**; `/app/paiement` reste simulé.
+> **Sources :** pages officielles fedapay.com (accueil, `tarifications`) et documentation `docs-v1.fedapay.com` (méthodes de paiement, transactions), consultées le 2026-10-03. ⚠️ La page des tarifs semblait datée d'environ onze mois : **tous les chiffres ci-dessous sont à reconfirmer auprès de FedaPay avant toute décision.**
+
+### 20.1 Ce que FedaPay annonce
+- **Pays :** Bénin, Côte d'Ivoire, Togo, Sénégal, Niger (cinq pays cités). La page d'accueil parle aussi de « toute la zone UEMOA » : à confirmer avec FedaPay.
+- **Moyens :** Mobile Money, cartes bancaires et wallets. **Bénin :** MTN, Moov, Celtiis, Coris Money, BMO. **Côte d'Ivoire :** MTN (dans le tableau des tarifs).
+- **Fonctionnement :** création d'une transaction par l'API, puis génération d'un lien et d'un jeton de paiement ; paiement Mobile Money **avec ou sans redirection** (le client valide sur son téléphone avec son code secret) ; **environnements « sandbox » (test) et « live »** ; **webhooks** ; pas d'abonnement.
+- **Reversement :** sur compte Mobile Money ou bancaire **après 3 jours ouvrés**.
+- Les frais peuvent être configurés **à la charge du client ou du marchand**.
+
+### 20.2 Tarifs publiés (à reconfirmer)
+| Moyen | Commission par transaction |
+|---|---|
+| Bénin : MTN, Moov, Celtiis | **1,8 %** |
+| Bénin : Coris Money, BMO | **4 %** |
+| Côte d'Ivoire : MTN | **4 %** |
+| Cartes bancaires | *non trouvé : à demander* |
+
+**Versements vers un compte Mobile Money (frais fixes par virement) :** 0 à 10 000 F : 150 F · 10 001 à 50 000 : 300 F · 50 001 à 150 000 : 800 F · 150 001 à 500 000 : 2 000 F · plus de 500 000 : 2 500 F. Des frais supplémentaires peuvent s'ajouter entre réseaux différents.
+
+### 20.3 Conséquence sur nos taux : point à trancher ⚠️
+La commission Rallyo (`src/lib/fees.ts`, tranches progressives de 10 % à 3 %) doit couvrir le coût FedaPay. Le **taux réellement payé** par l'organisateur dépend du montant :
+
+| Montant collecté | Taux Rallyo réel | Marge si FedaPay à 1,8 % | Marge si FedaPay à 4 % |
+|---|---|---|---|
+| 100 000 F | 10,00 % | 8,2 pts | 6,0 pts |
+| 500 000 F | 8,40 % | 6,6 pts | 4,4 pts |
+| 1 000 000 F | 7,20 % | 5,4 pts | 3,2 pts |
+| 2 500 000 F | 5,28 % | 3,5 pts | 1,3 pt |
+| 5 000 000 F | 4,14 % | 2,3 pts | **0,14 pt** |
+| au-delà d'environ 5,7 M F | < 4 % | positive | **négative** |
+
+*(Calcul à partir de la grille actuelle, avant frais de versement et autres coûts.)*
+- Avec les moyens à 1,8 % (Bénin : MTN, Moov, Celtiis), la marge reste confortable partout.
+- Avec les moyens à 4 % (Coris, BMO, MTN Côte d'Ivoire), **la marge disparaît sur les grosses collectes** (≈ 5 M F), et devient négative au-delà.
+- Les **frais fixes de versement** (150 à 2 500 F par virement) pèsent sur les petits retraits répétés (150 F sur 10 000 F = 1,5 %).
+- ❓ **Décisions à prendre :** (a) Rallyo absorbe le coût FedaPay dans sa commission ; (b) les moyens à 4 % sont proposés ou non au lancement, ou avec un taux plancher plus élevé ; (c) qui supporte les frais de versement. L'option « frais à la charge du client » est possible chez FedaPay mais **contredit la décision du 2026-10-02** (commission jamais ajoutée à l'acheteur).
+
+### 20.4 Conséquences sur le produit
+- **Délais :** le reversement prend jusqu'à 3 jours ouvrés : les statuts « réservé », « en vérification », « versé » (§10.7, §17) et les délais annoncés aux organisateurs doivent s'aligner sur la réalité du prestataire.
+- **Pays :** ne pas promettre « toute l'Afrique de l'Ouest » dans les textes publics tant que les pays réellement ouverts ne sont pas confirmés (§16 question 2).
+- **Remboursements (§10.6) et versements (§10.4) :** à vérifier dans la documentation FedaPay (existence et conditions des API de remboursement et de transfert).
+- **Conformité :** FedaPay détient et reverse les fonds, ce qui va dans le sens du §10.1 (pas de portefeuille Rallyo). Conditions d'ouverture d'un compte « live » (pièces, activité) à vérifier.
+- **Montant minimum :** nos contributions démarrent à 100 F ; le minimum accepté par FedaPay est à vérifier.
+
+### 20.5 Intégration proposée 🟡
+1. **Uniquement côté serveur** (routes Next.js). Clés dans des variables d'environnement **non publiques** (jamais `NEXT_PUBLIC_`) : clé secrète, secret du webhook, environnement `sandbox` ou `live`.
+2. **Le montant est toujours recalculé côté serveur** (jamais celui envoyé par le navigateur) ; la commission est calculée avec `fees.ts`.
+3. **Flux :** le visiteur lance le paiement → création d'une ligne en statut `pending` (`contributions` ou commande) → création de la transaction FedaPay et du lien → le client paie → **webhook** (`/api/webhooks/fedapay`) : **vérification de la signature** (méthode à lire dans la documentation officielle), mise à jour du statut, ajout au montant collecté, émission des billets.
+4. **Idempotence :** les colonnes `provider_ref` de `contributions` et `tickets` sont déjà **uniques** ; un webhook rejoué ne doit jamais créer deux billets ni deux contributions.
+5. **Jamais de confirmation depuis le navigateur :** la page de retour relit l'état côté serveur.
+6. **Tests en « sandbox » d'abord :** paiement réussi, échoué, annulé, expiré, webhook rejoué, doublon, signature invalide.
+7. Le **webhook exige une adresse publique** : à prévoir après le déploiement (ou un tunnel de test).
+
+### 20.6 À faire par le porteur
+- Créer un compte FedaPay, obtenir les **clés de test (sandbox)** ; le compte « live » demandera probablement des vérifications (à confirmer).
+- Poser à FedaPay les questions du §20.2 à §20.4 (tarif cartes, pays ouverts, remboursements, versements, minimum, signature du webhook).
+- Trancher les décisions du §20.3.
