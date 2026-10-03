@@ -110,7 +110,7 @@ function toItem(r: RpcRow): ShowcaseItem {
 
 /** Appelle le back. Ne lève jamais d'erreur : en cas de souci on renvoie une liste vide (→ photos). */
 async function fetchPopular(): Promise<ShowcaseItem[]> {
-  const rows = await rpc<RpcRow>("showcase_popular", { max_items: MAX_SLIDES });
+  const rows = await rpc<RpcRow>("rallyo_showcase_popular", { max_items: MAX_SLIDES });
   return rows.slice(0, MAX_SLIDES).map(toItem);
 }
 

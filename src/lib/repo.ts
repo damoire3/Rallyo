@@ -25,7 +25,7 @@ export async function getCagnotteAny(id: string): Promise<Cagnotte | undefined> 
   const demo = getCagnotte(id);
   if (demo || !isUuid(id)) return demo;
 
-  const [r] = await rpc<CampaignRow>("campaign_public", { p_id: id }, 30);
+  const [r] = await rpc<CampaignRow>("rallyo_campaign_public", { p_id: id }, 30);
   if (!r) return undefined;
   // 0 = pas de date limite (la page adapte sa phrase)
   const days = r.ends_at ? Math.max(1, Math.ceil((new Date(r.ends_at).getTime() - Date.now()) / 86_400_000)) : 0;
@@ -47,7 +47,7 @@ export async function getEventAny(id: string): Promise<EventItem | undefined> {
   const demo = getEvent(id);
   if (demo || !isUuid(id)) return demo;
 
-  const [r] = await rpc<EventRow>("event_public", { p_id: id }, 30);
+  const [r] = await rpc<EventRow>("rallyo_event_public", { p_id: id }, 30);
   if (!r) return undefined;
   const d = new Date(r.starts_at);
   const date = d

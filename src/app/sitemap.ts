@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Sinon (développement local) → pages de démonstration.
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const items: { path: string; lastModified?: Date }[] = configured
-    ? (await rpc<Entry>("sitemap_entries", { max_items: 5000 }, 3600)).map((r) => ({
+    ? (await rpc<Entry>("rallyo_sitemap_entries", { max_items: 5000 }, 3600)).map((r) => ({
         path: `/app/${r.kind === "event" ? "evenements" : "cagnottes"}/${r.id}`,
         lastModified: new Date(r.created_at),
       }))

@@ -1,6 +1,6 @@
 # Rallyo — Journal de bord
 
-> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-02** (après page Contact et aide)
+> Mis à jour à chaque étape. Dernière mise à jour : **2026-10-03** (après checklist d'avancement)
 > Légende : ✅ fait · 🔄 en cours · ⏳ à faire · ⚠️ point d'attention
 
 **Projet :** `C:\Users\HP\Desktop\Arbre\Mes saas\rallyo-next` — voir `CAHIER_DES_CHARGES.md`
@@ -8,14 +8,121 @@
 
 ---
 
+## 0. Règle critique et checklist d'avancement
+
+> **⚠️ RÈGLE CRITIQUE**
+> Ce fichier doit être lu et mis à jour par **toute personne ou IA** qui intervient sur le projet.
+> - **AVANT** de commencer : lire les dernières entrées + ajouter `🔄 EN COURS` (avec la liste des fichiers touchés)
+> - **APRÈS** avoir terminé : passer l'entrée en `✅ TERMINÉ` ou `⚠️ INCOMPLET` (et dire ce qui reste)
+> - **Ne jamais modifier un fichier marqué `🔄 EN COURS` par quelqu'un d'autre**
+> - En cas de conflit, le `CAHIER_DES_CHARGES.md` fait foi pour les décisions
+> - Jamais de clé secrète, mot de passe ou jeton dans ce fichier (uniquement `.env.local`, non versionné)
+
+**Format d'une entrée (pour toutes les nouvelles entrées) :**
+```
+### [DATE] — [NOM / IA] — [sujet]
+**Statut :** 🔄 EN COURS | ✅ TERMINÉ | ⚠️ INCOMPLET | ❌ ANNULÉ
+**Fichiers touchés :** liste des fichiers modifiés / créés
+**Description :** ce qui est fait / en cours
+**Reste :** ce qui n'a pas été fait dans cette session
+```
+
+### Index des fichiers critiques
+| Fichier | Rôle |
+|---|---|
+| `docs/CAHIER_DES_CHARGES.md` | Référence : spécifications et décisions |
+| `docs/JOURNAL.md` | Ce fichier |
+| `src/lib/fees.ts` | Grille de frais dégressive — source unique (simulateur, tarifs, FAQ) |
+| `src/lib/showcase.ts` | Défilé « Ça se passe chez nous » : 13 max, popularité, repli photos |
+| `src/lib/repo.ts` | Lecture cagnotte / évènement : démo d'abord, Supabase ensuite |
+| `src/lib/supabase-rest.ts` | Seul point d'appel de Supabase côté serveur |
+| `src/lib/contact.ts` | Validation du formulaire de contact (client + serveur) |
+| `src/lib/site-data.ts` | Textes et données de la landing (FAQ, tarifs, menu) |
+| `src/lib/data.ts` | Données de démonstration de l'appli |
+| `src/app/(site)/site.css` | Styles de la landing |
+| `supabase/migrations/` | Schéma et fonctions SQL (0001 à 0005) |
+| `.env.example` | Liste des variables d'environnement |
+
+### Checklist — Site (landing)
+| Page | Route | Code | Contrôle visuel |
+|---|---|---|---|
+| Accueil (hero v2, galerie, simulateur) | `/` | ✅ | ⏳ |
+| Comment ça marche | `/comment-ca-marche` | ✅ ⚠️ texte à réécrire | ⏳ |
+| Pourquoi Rallyo | `/pourquoi-rallyo` | ✅ | ⏳ |
+| Tarifs | `/tarifs` | ✅ ⚠️ grille à confirmer | ⏳ |
+| Sécurité | `/securite` | ✅ ⚠️ texte à réécrire | ⏳ |
+| FAQ | `/faq` | ✅ ⚠️ texte à réécrire | ⏳ |
+| Contact et aide | `/contact` | ✅ | ⏳ |
+| Mentions légales / CGU / confidentialité | — | ⏳ à créer (gabarits à faire valider) | — |
+
+### Checklist — Appli (`/app`)
+| Écran | Route | Statut |
+|---|---|---|
+| Accueil | `/app` | ✅ données de démo |
+| Explorer | `/app/explorer` | ✅ données de démo |
+| Créer | `/app/creer` | ⚠️ maquette, n'enregistre rien |
+| Mes billets | `/app/billets` | ✅ données de démo |
+| Profil | `/app/profil` | ✅ données de démo |
+| Détail cagnotte | `/app/cagnottes/[id]` | ✅ démo + Supabase (UUID), non testé sur vraie base |
+| Détail évènement | `/app/evenements/[id]` | ✅ démo + Supabase (UUID), non testé sur vraie base |
+| Paiement | `/app/paiement` | ⚠️ simulé (prestataire non choisi) |
+| Connexion | `/app/connexion` | ⚠️ maquette, authentification non faite |
+
+### Checklist — API
+| Route | Méthodes | Statut |
+|---|---|---|
+| `/api/contact` | POST | ✅ testée (validation, anti-robots, limite 5 / 10 min) ; 503 tant que Supabase n'est pas configuré |
+| Cagnottes, évènements, billets, commandes, retraits | — | ⏳ à définir avec les parcours A / B / C (spécification V1) |
+| Authentification (OTP téléphone, e-mail) | — | ⏳ |
+| Webhook du prestataire de paiement | — | ⏳ (prestataire à choisir) |
+
+### Checklist — Base de données (Supabase, projet `my-portos`)
+| Élément | Statut |
+|---|---|
+| Projet choisi, actif, sans collision, 0 utilisateur | ✅ vérifié par le porteur |
+| Migrations `0001` à `0005` adaptées au schéma `rallyo` + fonctions `rallyo_*` dans `public` | 🔄 autre IA (aucune modification sur disque au 2026-10-03) |
+| `0001_init.sql` : schéma initial (profils, cagnottes, évènements, billets, contributions) | ⏳ non appliquée |
+| `0002_showcase.sql` : popularité de la galerie | ⏳ non appliquée |
+| `0003_public_detail.sql` : lecture publique cagnotte / évènement | ⏳ non appliquée |
+| `0004_sitemap.sql` : liste des pages pour le sitemap | ⏳ non appliquée |
+| `0005_contact.sql` : messages de contact (insertion seule) | ⏳ non appliquée |
+| `0006`+ : nouveau schéma V1 (catégories de billets, commandes, retraits, vérification d'identité, signalements, favoris) | ⏳ à écrire |
+| Réglage « Exposed schemas » | ✅ **inutile** avec l'approche « tables dans `rallyo`, fonctions dans `public` » (le schéma `rallyo` n'apparaît pas dans la liste tant qu'il n'est pas créé) |
+
+### Checklist — À faire par le porteur (dans l'ordre)
+- [x] Choisir le projet Supabase (`my-portos`) et vérifier qu'il est actif
+- [x] Lister le contenu du projet, vérifier l'absence d'utilisateurs
+- [ ] Attendre la fin de l'adaptation des migrations (voir « En cours »), puis les exécuter **une par une, dans l'ordre**, dans le SQL Editor
+- [ ] Copier l'URL du projet et la clé publique (Settings → API) dans `.env.local` — **jamais** la clé `service_role`
+- [ ] Définir `NEXT_PUBLIC_SITE_URL` (adresse publique du site) quand le domaine existe
+- [ ] Renseigner les coordonnées de contact (`NEXT_PUBLIC_CONTACT_EMAIL / WHATSAPP / PHONE / HOURS`)
+- [ ] Trancher la grille de frais : **10 % → 3 %** (dans le code) ou **9 % → 3 %** (demande orale) — un seul fichier à changer : `src/lib/fees.ts`
+- [ ] Choisir le prestataire Mobile Money (CinetPay, FedaPay, PayDunya, Flutterwave…)
+- [ ] Fournir le lien de **Ticketmania** (tarifs introuvables) pour compléter la comparaison
+- [ ] Faire le contrôle visuel de la landing avec `npm run dev` (ordinateur + mobile)
+- [ ] Répondre aux décisions ouvertes du cahier des charges (§16)
+
+### Checklist — Tests à faire après les migrations
+- [ ] Envoyer un message depuis `/contact` → une ligne apparaît dans `rallyo.contact_messages`
+- [ ] Créer une cagnotte et un évènement de test → ils apparaissent dans la galerie de l'accueil (≤ 60 s)
+- [ ] Cliquer sur leurs cartes → la page de détail s'ouvre (pas de 404)
+- [ ] Vérifier le sitemap (`/sitemap.xml`) : seules les vraies pages sont listées
+- [ ] Vérifier qu'aucune table `rallyo.*` n'est lisible avec la clé publique
+
+---
+
 ## 1. Tableau de bord
 
 ### 🔄 En cours
+- **⚠️ REPRIS PAR CLAUDE le 2026-10-03, sur décision du porteur** (ancienne entrée « 🔄 EN COURS — TOUR DE CLAUDE : migrations Supabase + appels côté code ») : l'autre IA n'a pas posé son ✅ TERMINÉ ; son travail est repris et terminé par Claude, voir l'entrée « Claude (reprise) » dans le journal chronologique. Le porteur a demandé à Claude de faire les migrations et d'alterner avec l'autre IA (**un seul intervenant à la fois ; l'autre IA attend la ligne ✅ TERMINÉ ci-dessous**). Approche : **tables dans le schéma `rallyo` (non exposé), fonctions `SECURITY DEFINER` préfixées `rallyo_` dans `public`** — aucun réglage « Exposed schemas » nécessaire. Les migrations n'ont jamais été appliquées, elles sont donc réécrites en place. Fichiers touchés : `supabase/migrations/0001`–`0005`, `src/lib/showcase.ts`, `src/lib/repo.ts`, `src/app/sitemap.ts`, `src/app/api/contact/route.ts`, `.env.example`. **Ne pas toucher à ces fichiers.** `tmp-schema.cjs` (autre IA) est **obsolète** (il suppose le schéma exposé) : ne pas l'exécuter.
+- **▶️ DÉBUT — Utiliser le projet Supabase « Drop » existant pour Rallyo** (décision du porteur, 2026-10-02). **Analyse faite :** le dossier `Desktop\Drop\client` n'utilise pas encore Supabase (aucune dépendance, aucun `.env`, aucun appel de table ; seul un commentaire prévoit d'y brancher le stockage d'images). Le contenu en ligne du projet n'est pas lisible (le connecteur Supabase n'expose aucun outil). **Décision technique : isoler Rallyo dans son propre schéma Postgres `rallyo`** (pas de collision possible avec Drop). Étape 2 en cours : adapter `supabase/migrations/0001`–`0005` (`public.` → `rallyo.`, types et fonctions dans le schéma), `src/lib/supabase-rest.ts` et `src/app/api/contact/route.ts` (en-tête `Content-Profile: rallyo`), `.env.example`. **Aucune migration appliquée à la base.** ⚠️ Merci de ne pas toucher à ces fichiers en parallèle.
+- **✅ DÉCISION DU PORTEUR (2026-10-02) — le projet Supabase cible n'est plus « Drop » mais « my-portos »** (référence `eitylrvshhrflcywhigo`, tableau de bord : https://supabase.com/dashboard/project/eitylrvshhrflcywhigo, URL d'API attendue : `https://eitylrvshhrflcywhigo.supabase.co`). L'isolation dans le schéma `rallyo` reste valable. **À faire avant d'appliquer quoi que ce soit :** vérifier que le projet est actif (non en pause), lister son contenu (requête `information_schema`), vérifier s'il a de vrais utilisateurs (comptes `auth` partagés), ajouter `rallyo` aux « Exposed schemas » de l'API. Aucune clé n'est notée ici : elles vont uniquement dans `.env.local` (non versionné). **✅ VÉRIFIÉ par le porteur (2026-10-02) :** projet actif ; `public` contient seulement `blog_posts`, `projects`, `reviews`, `site_settings` (portfolio) et **aucune fonction** ; **0 utilisateur** `auth` → **aucune collision** avec Rallyo, ni dans `rallyo` ni dans `public` (noms de tables et de fonctions Rallyo tous différents) ; comptes partagés sans conséquence aujourd'hui (⚠️ à revoir si le portfolio ajoute un jour une connexion). **⚠️ Blocage :** le porteur n'arrive pas à accéder au réglage « Exposed schemas ». **Recommandation à l'IA qui adapte les migrations :** ne pas dépendre de ce réglage — garder les **tables dans le schéma `rallyo` (jamais exposées par l'API)** et ne publier que des **fonctions `SECURITY DEFINER` préfixées `rallyo_` dans `public`** (search_path fixé), y compris pour l'insertion du formulaire de contact (ex. `rallyo_contact_submit`) ; `supabase-rest.ts` n'aurait alors plus besoin de l'en-tête `Content-Profile`. Plus sûr (tables non atteignables en direct) et sans réglage manuel. Ne jamais modifier les 4 tables du portfolio.
 - **Contrôle visuel** (desktop + mobile) de l'ensemble de la landing : hero v2, galerie, icônes Lucide, simulateur de frais, page Contact — avec `npm run dev`. Personne ne l'a encore fait dans un navigateur (les vérifications faites jusqu'ici sont `tsc`, `build` et des requêtes HTTP).
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
 
 ### ✅ Fait
-- **✅ TERMINÉ — Page « Contact et aide »** (`/contact`) : 3 cartes d'aide, formulaire, canaux de contact, bloc sécurité ; route `POST /api/contact` ; menu « Aide » et colonne « Aide » du pied de page ; migration `0005_contact.sql` (voir entrée du 2026-10-02 « Page Contact et aide »)
+- **✅ TERMINÉ (2026-10-03) — Checklist d'avancement au format SIVEP** : règle critique « avant / après », format d'entrée, index des fichiers critiques et tableaux d'état (site, appli, API, base de données, tâches du porteur, tests après migrations) dans la section 0 de ce fichier. Aucun fichier de code touché. **Reste :** tenir ces tableaux à jour à chaque tâche terminée.
+- **✅ TERMINÉ — Page « Contact et aide »** (`/contact`) : 6 cartes d'aide, questions les plus posées, formulaire, canaux de contact, bloc prudence ; route `POST /api/contact` ; menu « Aide » et colonne « Aide » du pied de page ; migration `0005_contact.sql` (voir entrée du 2026-10-02 « Page Contact et aide »)
 - Détails cagnotte / évènement / paiement branchés sur Supabase (démo d'abord, UUID ensuite) — `repo.ts`, migration `0003`
 - Hero v2 (pop-ups à droite) + galerie « Ça se passe chez nous » : cartes-billets branchées au back, 13 max, popularité, repli photos — migration `0002`
 - Dossier projet créé, Next.js 15.5.26 + React 19.1.0 + Tailwind 4 + TypeScript 5.8 installés
@@ -85,6 +192,51 @@ Ordre **proposé** :
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-03 — Claude (reprise) — Fin des migrations Supabase, puis textes publics et pages légales
+**Statut :** 🔄 EN COURS
+**Décision du porteur :** « reprends son travail inachevé et termine, puis on continue le travail si tu as des suggestions et fais-les ».
+**Fichiers touchés (prévus) :**
+- Reprise de l'autre IA : `supabase/migrations/0001`–`0005`, `src/lib/showcase.ts`, `src/lib/repo.ts`, `src/app/sitemap.ts`, `src/app/api/contact/route.ts`, `.env.example`, suppression de `tmp-schema.cjs` (obsolète).
+- Mes suggestions : `src/lib/site-data.ts` (FAQ), pages `/securite` et `/comment-ca-marche`, nouvelles pages légales + `footer.tsx` + `sitemap.ts`, `.gitattributes`, `docs/`.
+**Plan :** (1) relire les 3 migrations non lues en entier + **contrôle de syntaxe SQL** hors base ; (2) corriger ce qui doit l'être ; (3) tsc + build + tests HTTP ; (4) commit ; (5) réécrire les textes publics selon les règles de fonds du cahier §10 ; (6) gabarits légaux **à faire valider** ; (7) `.gitattributes`.
+**Reste :** tout (déclaration de début).
+
+### 2026-10-03 — Claude (revue) — Relecture du travail de l'autre IA (migrations Supabase)
+**Statut :** ✅ TERMINÉ (lecture seule)
+**Fichiers touchés :** `docs/JOURNAL.md` uniquement (cette entrée). **Aucun** fichier de code, de migration ni l'entrée « 🔄 EN COURS » de l'autre IA n'a été modifié.
+**Description :** à la demande du porteur, vérification de l'avancement de l'autre IA avant de reprendre la main.
+
+**État constaté**
+- 11 fichiers modifiés et **non commités** (migrations `0001`–`0005`, `showcase.ts`, `repo.ts`, `sitemap.ts`, `api/contact/route.ts`, journal, README-SECURE). Dernière modification de code : 09:31, rien depuis. **Son ✅ TERMINÉ n'est pas posé.**
+- `tsc --noEmit` : **0 erreur**. `npm run build` **non relancé** (pour ne pas entrer en collision avec `.next` si l'autre IA travaille encore).
+
+**Relu et conforme à l'approche annoncée** (tables dans `rallyo`, fonctions `rallyo_*` dans `public`)
+- `0003` et `0005` lus en entier ; `0001`, `0002`, `0004` contrôlés sur les points critiques.
+- Schéma `rallyo` créé puis `revoke` pour public / anon / authenticated ; **RLS activée sur les 5 tables** ; aucune fonction `SECURITY DEFINER` sans `search_path` vide ; `execute` retiré à `public`, accordé à `anon` / `authenticated`.
+- Lecture publique limitée aux cagnottes `active` / `completed` et aux évènements publiés.
+- Formulaire de contact : validation **refaite en SQL** (la clé publique étant visible, la route peut être contournée) + limite de débit côté base.
+- **Code ↔ SQL :** 5 fonctions définies = 5 fonctions appelées, aucun ancien nom sans préfixe, **aucun appel direct** `rest/v1/<table>` ; les erreurs `rate_limited` / `invalid_input` de la route correspondent à celles de la fonction.
+
+**Non vérifié :** exécution réelle du SQL (aucune migration appliquée, pas d'accès à la base), build, rendu visuel.
+
+**Remarques (non bloquantes)**
+1. La limite **globale** de 100 messages / 10 min dans `rallyo_contact_submit` permet à un abus de bloquer le formulaire pour tout le monde pendant 10 min. Compromis à confirmer.
+2. `revoke all on all tables in schema rallyo` (fin de `0001`) rend inopérantes les politiques RLS d'écriture (« créer sa cagnotte »…) pour `authenticated`. Cohérent avec « tout passe par des fonctions », mais à retenir quand l'authentification sera ajoutée : il faudra de nouvelles fonctions `rallyo_*` (ou des `GRANT` explicites).
+3. Si le SQL répond `invalid_input`, la route renvoie 400 **sans** détail par champ : le formulaire affiche le message générique « n'a pas pu être envoyé » (cas rare, le client valide avant).
+4. Migration `0005` non appliquée → PostgREST 404 → la route répond 502 (message générique). Comportement attendu.
+5. `docs/README-SECURE.md` : version de travail **raccourcie à 23:41** (≈12 Ko, contre ≈19,8 Ko commités en `0078827`) : sections **A** (stack figée), **B** (NODE_ENV, diagnostic de connexion, « travailler avec une IA ») et **C** (points SIVEP) absentes. Version complète **conservée dans git**. Non modifié par moi ; **à confirmer par le porteur** (suppression voulue ou accident).
+6. `tmp-schema.cjs` (non suivi par git) est obsolète selon ce journal : à supprimer par son auteur.
+7. Git avertit « LF will be replaced by CRLF » : sans effet fonctionnel ; un `.gitattributes` éviterait les diffs de fins de ligne.
+
+**Reste :** attendre le ✅ TERMINÉ de l'autre IA (ou la décision du porteur de considérer son tour comme fini) → build, commit de ses fichiers, puis le porteur applique les migrations **une par une, dans l'ordre**.
+
+### 2026-10-02 — Décision : on garde Supabase ✅ TERMINÉ
+- **Contexte :** le porteur a atteint la limite du plan gratuit Supabase (2 projets actifs, pause après 7 jours d'inactivité) et a demandé une alternative.
+- **Comparatif fait (sources officielles, vérifié le 2026-10-02) :** Neon (Postgres, pas de pause de projet mais base seule : ni auth ni fichiers), Appwrite Cloud (2 projets, pause après 1 semaine : pas mieux), Cloudflare D1 (limites quotidiennes bloquantes depuis le 2026-09-01), Turso (SQLite, moins adapté à l'argent), Firebase (stockage retiré du plan gratuit en 02/2026).
+- **Décision du porteur : on reste sur Supabase.** Aucun code modifié. Ne pas proposer de migration vers Neon/autre sans nouvelle demande du porteur.
+- **À prévoir :** un seul projet Supabase pour Rallyo (libérer un emplacement en supprimant ou en passant en pause un ancien projet inutile). Le code n'appelle Supabase que par `supabase-rest.ts`, `api/contact/route.ts` et `sitemap.ts`.
+- ⚠️ Projet gratuit = **pause après 7 jours sans activité** : acceptable en développement, pas pour un site public. Prévoir le plan Pro avant le lancement, ou un appel régulier de maintien d'activité en attendant.
 
 ### 2026-10-02 — Page « Contact et aide » ✅ TERMINÉ
 **Demande :** reprendre le travail commencé par l'autre IA (page contact avec aide) et le terminer. **Début notifié** avant d'agir, **fin notifiée** ici (nouvelle règle de l'équipe : on prévient avant, on prévient après).

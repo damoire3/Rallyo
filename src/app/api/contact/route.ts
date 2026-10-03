@@ -63,23 +63,29 @@ export async function POST(req: Request) {
   if (!url || !key) return json({ error: "unconfigured" }, 503);
 
   try {
-    const res = await fetch(`${url}/rest/v1/contact_messages`, {
+    // Insertion par la fonction SQL public.rallyo_contact_submit (la table elle-même n'est pas exposée).
+    // La fonction refait la validation et applique sa propre limite de débit côté base.
+    const res = await fetch(`${url}/rest/v1/rpc/rallyo_contact_submit`, {
       method: "POST",
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
-        Prefer: "return=minimal",
       },
       body: JSON.stringify({
-        name: input.name.trim(),
-        contact: input.contact.trim(),
-        topic: input.topic,
-        message: input.message.trim(),
+        p_name: input.name.trim(),
+        p_contact: input.contact.trim(),
+        p_topic: input.topic,
+        p_message: input.message.trim(),
       }),
       signal: AbortSignal.timeout(5_000),
     });
-    if (!res.ok) return json({ error: "storage" }, 502);
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as { message?: string } | null;
+      if (err?.message === "rate_limited") return json({ error: "rate_limited" }, 429);
+      if (err?.message === "invalid_input") return json({ error: "validation" }, 400); // sans détail par champ → message générique
+      return json({ error: "storage" }, 502);
+    }
     return json({ ok: true });
   } catch {
     return json({ error: "storage" }, 502);
