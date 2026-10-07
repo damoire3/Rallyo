@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { CtaBand, FaqItems, PageHero } from "@/components/site/blocks";
 import { FeeCalculator } from "@/components/site/fee-calculator";
-import { FEE_MAX_RATE, FEE_MIN_RATE, FEE_TIERS, tierLabel } from "@/lib/fees";
+import { fmtRate, PROVIDER_METHODS, RALLYO_RATE, TOTAL_RATE_MAX, TOTAL_RATE_MIN } from "@/lib/fees";
 import { FAQ, IMAGES, PRICING } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "Tarifs",
-  description: `Inscription gratuite, commission uniquement quand tu collectes : un taux dégressif de ${FEE_MAX_RATE} % à ${FEE_MIN_RATE} %, pour les cagnottes comme pour la billetterie. Simule tes frais.`,
+  description: `Inscription gratuite, aucun abonnement : ${fmtRate(RALLYO_RATE)} % pour Rallyo, plus le pourcentage du prestataire de paiement, soit ${fmtRate(TOTAL_RATE_MIN)} % à ${fmtRate(TOTAL_RATE_MAX)} % au total selon le moyen de paiement. Simule tes frais.`,
   alternates: { canonical: "/tarifs" },
 };
 
@@ -18,7 +18,7 @@ export default function PricingPage() {
       <PageHero
         eyebrow="Tarifs"
         title={<>Tu ne paies que <span className="graffiti">si tu collectes.</span></>}
-        lede={`Pas d’abonnement, pas de frais d’inscription. Une commission dégressive, de ${FEE_MAX_RATE} % à ${FEE_MIN_RATE} % : plus ta collecte grandit, plus le taux baisse.`}
+        lede={`Pas d’abonnement, pas de frais d’inscription. Rallyo prend ${fmtRate(RALLYO_RATE)} %, plus le pourcentage du prestataire de paiement : rien d’autre.`}
         bg={IMAGES.pricingBg}
         tint="acid"
       />
@@ -40,37 +40,41 @@ export default function PricingPage() {
       <section className="block alt">
         <div className="container">
           <div className="block-head">
-            <div className="eyebrow">{"// La grille"}</div>
+            <div className="eyebrow">{"// Tes frais"}</div>
             <h2 className="section-title" data-reveal="">
-              Un taux qui <span className="graffiti">baisse avec toi.</span>
+              Un calcul <span className="graffiti">simple.</span>
             </h2>
             <p className="lede" data-reveal="">
-              Chaque tranche de ta collecte est facturée à son propre taux. Ce que tu as déjà collecté ne coûte jamais plus cher
-              quand tu dépasses un palier.
+              {fmtRate(RALLYO_RATE)} % pour Rallyo, plus le pourcentage du prestataire de paiement selon le moyen utilisé par tes
+              participants. Le même calcul pour les cagnottes et pour la billetterie.
             </p>
           </div>
           <div className="compare tier-table" data-reveal="">
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Part de ta collecte</th>
-                  <th scope="col">Taux sur cette part</th>
+                  <th scope="col">Moyen de paiement</th>
+                  <th scope="col">Rallyo</th>
+                  <th scope="col">Prestataire</th>
+                  <th scope="col">Total</th>
                 </tr>
               </thead>
               <tbody>
-                {FEE_TIERS.map((t, i) => (
-                  <tr key={t.rate + String(t.upTo)}>
-                    <td>{tierLabel(i)}</td>
-                    <td className="us"><b>{t.rate} %</b></td>
+                {PROVIDER_METHODS.map((m) => (
+                  <tr key={m.id}>
+                    <td>{m.label}</td>
+                    <td>{fmtRate(RALLYO_RATE)} %</td>
+                    <td>{fmtRate(m.rate)} %</td>
+                    <td className="us"><b>{fmtRate(RALLYO_RATE + m.rate)} %</b></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <p className="note">
-            Même grille pour les cagnottes et la billetterie. Les frais du prestataire Mobile Money (opérateur ou agrégateur)
-            s’ajoutent à la commission Rallyo et varient selon le moyen de paiement. Taux visés au lancement, à confirmer avant
-            l’ouverture.
+            Les frais sont déduits de tes recettes : tes participants paient le montant affiché, sans frais Rallyo ajoutés.
+            Les pourcentages du prestataire de paiement sont ceux qu’il publie, à confirmer avant l’ouverture. Les
+            virements de tes fonds vers ton Mobile Money peuvent comporter de petits frais fixes.
           </p>
         </div>
       </section>
@@ -82,7 +86,7 @@ export default function PricingPage() {
             <h2 className="section-title" data-reveal="">
               Combien <span className="graffiti">il te reste ?</span>
             </h2>
-            <p className="lede" data-reveal="">Entre un montant et vois la commission exacte, avant même de te lancer.</p>
+            <p className="lede" data-reveal="">Entre un montant, choisis le moyen de paiement et vois tes frais exacts, avant même de te lancer.</p>
           </div>
           <FeeCalculator />
         </div>

@@ -97,7 +97,7 @@ export function CategoryBadge({ children }: { children: ReactNode }) {
 }
 
 const fieldClass =
-  "mt-1.5 w-full rounded-xl border border-input bg-card p-3.5 text-[13px] text-white outline-none focus:border-magenta";
+  "mt-1 w-full rounded-xl border border-input bg-card px-3.5 py-3 text-[13px] text-white outline-none focus:border-magenta";
 
 type FieldProps = { label: string } & (
   | ({ area?: false } & InputHTMLAttributes<HTMLInputElement>)

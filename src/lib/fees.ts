@@ -1,88 +1,85 @@
 /**
- * Grille de commission Rallyo — source unique de vérité.
- * Utilisée par le simulateur et la page Tarifs, et à réutiliser côté serveur pour le calcul réel.
+ * Frais Rallyo : SOURCE UNIQUE (simulateur, page Tarifs, FAQ, futur paiement).
  *
- * Fonctionnement : tranches PROGRESSIVES (comme l'impôt). Chaque tranche du montant est facturée
- * à son propre taux, donc la commission ne diminue jamais quand le montant augmente.
- * Taux fixés par le porteur du projet : de 10 % (premières tranches) à 3 % (grosses collectes).
- * ⚠️ Les taux intermédiaires (8 / 6 / 4 %) et les seuils sont à valider.
+ * MODÈLE (décision du porteur, 2026-10-03), identique pour les cagnottes et la billetterie :
+ *
+ *     frais total = 5 % (Rallyo) + pourcentage du prestataire de paiement (FedaPay) selon le moyen de paiement
+ *
+ * Rien d'autre : ni frais d'inscription, ni abonnement, ni paliers. Ce modèle REMPLACE l'ancienne grille
+ * progressive de 10 % à 3 %.
+ *
+ * HYPOTHÈSE à confirmer : le total est DÉDUIT des recettes de l'organisateur (décision du 2026-10-02) et
+ * n'est jamais ajouté au prix payé par l'acheteur.
+ *
+ * Pourcentages FedaPay : tarifs publiés sur fedapay.com, relevés le 2026-10-03, À RECONFIRMER avant le lancement
+ * (la page semblait datée). Tarif des cartes bancaires : non trouvé, donc non proposé ici.
+ * Non inclus : les frais fixes de versement FedaPay (150 à 2 500 F par virement vers Mobile Money), cf. CDC §20.2.
+ *
+ * Pour changer un taux, il suffit de modifier ce fichier.
  */
 
-export type FeeTier = {
-  /** Borne haute de la tranche en FCFA (incluse). `null` = sans limite. */
-  upTo: number | null;
-  /** Taux appliqué à la part du montant située dans cette tranche, en %. */
-  rate: number;
-};
+/** Part de Rallyo, en %. */
+export const RALLYO_RATE = 5;
 
-export const FEE_TIERS: readonly FeeTier[] = [
-  { upTo: 100_000, rate: 10 },
-  { upTo: 500_000, rate: 8 },
-  { upTo: 1_000_000, rate: 6 },
-  { upTo: 2_500_000, rate: 4 },
-  { upTo: null, rate: 3 },
+export type ProviderMethod = { id: string; label: string; rate: number };
+
+/** Moyens de paiement FedaPay et pourcentage prélevé par FedaPay, en %. */
+export const PROVIDER_METHODS: ProviderMethod[] = [
+  { id: "mobile-benin", label: "Mobile Money Bénin : MTN, Moov, Celtiis", rate: 1.8 },
+  { id: "mobile-plus", label: "Coris Money, BMO (Bénin) · MTN Côte d’Ivoire", rate: 4 },
 ];
 
-export type FeeSlice = {
-  /** Début de la tranche (exclu) et fin (incluse) du morceau réellement concerné. */
-  from: number;
-  to: number;
-  rate: number;
-  /** Part du montant dans cette tranche, en FCFA. */
-  amount: number;
-  /** Commission sur cette part, en FCFA (non arrondie). */
-  fee: number;
-};
+export const DEFAULT_METHOD: ProviderMethod = PROVIDER_METHODS[0];
 
-export type FeeResult = {
+const providerRates = PROVIDER_METHODS.map((m) => m.rate);
+/** Total le plus bas et le plus haut selon le moyen de paiement (Rallyo + FedaPay), en %. */
+export const TOTAL_RATE_MIN = RALLYO_RATE + Math.min(...providerRates);
+export const TOTAL_RATE_MAX = RALLYO_RATE + Math.max(...providerRates);
+
+/** Formate un taux à la française : 6,8 · 5 · 9. */
+export function fmtRate(rate: number): string {
+  return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(rate);
+}
+
+export type FeeBreakdown = {
   amount: number;
-  /** Commission totale, arrondie au FCFA. */
+  rallyoRate: number;
+  providerRate: number;
+  rallyoFee: number;
+  providerFee: number;
+  /** Total prélevé (Rallyo + prestataire). */
   fee: number;
-  /** Montant reçu par l'organisateur (hors frais du prestataire Mobile Money). */
+  /** Ce que reçoit l'organisateur. */
   net: number;
-  /** Taux moyen réellement payé, en % (ex. 4.14). */
-  effectiveRate: number;
-  slices: FeeSlice[];
+  totalRate: number;
 };
 
-/** Calcule la commission Rallyo pour un montant collecté (ou des ventes de billets) en FCFA. */
-export function computeFee(rawAmount: number): FeeResult {
-  const amount = Number.isFinite(rawAmount) ? Math.max(0, Math.floor(rawAmount)) : 0;
-  const slices: FeeSlice[] = [];
-  let lower = 0;
+/** Pourcentage d'un montant, arrondi au franc : calcul en dixièmes de % pour éviter les erreurs de virgule flottante. */
+const pct = (amount: number, rate: number) => Math.round((amount * Math.round(rate * 10)) / 1000);
 
-  for (const tier of FEE_TIERS) {
-    if (amount <= lower) break;
-    const upper = tier.upTo === null ? amount : Math.min(amount, tier.upTo);
-    const part = upper - lower;
-    if (part > 0) {
-      slices.push({ from: lower, to: upper, rate: tier.rate, amount: part, fee: (part * tier.rate) / 100 });
-    }
-    if (tier.upTo === null || amount <= tier.upTo) break;
-    lower = tier.upTo;
-  }
-
-  const fee = Math.round(slices.reduce((sum, s) => sum + s.fee, 0));
+export function computeFee(amount: number, providerRate: number = DEFAULT_METHOD.rate): FeeBreakdown {
+  const a = Math.max(0, Math.floor(Number.isFinite(amount) ? amount : 0));
+  const rallyoFee = pct(a, RALLYO_RATE);
+  const providerFee = pct(a, providerRate);
+  const fee = rallyoFee + providerFee;
   return {
-    amount,
+    amount: a,
+    rallyoRate: RALLYO_RATE,
+    providerRate,
+    rallyoFee,
+    providerFee,
     fee,
-    net: amount - fee,
-    effectiveRate: amount === 0 ? FEE_TIERS[0].rate : (fee / amount) * 100,
-    slices,
+    net: a - fee,
+    totalRate: RALLYO_RATE + providerRate,
   };
 }
 
-/** Libellé lisible d'une tranche, ex. « De 100 001 à 500 000 FCFA » ou « Au-delà de 2 500 000 FCFA ». */
-export function tierLabel(index: number): string {
-  const nf = new Intl.NumberFormat("fr-FR");
-  const fmtN = (n: number) => nf.format(n).replace(/[\u202f\u00a0]/g, " ");
-  const tier = FEE_TIERS[index];
-  const prev = index === 0 ? 0 : (FEE_TIERS[index - 1].upTo as number);
-  if (index === 0) return `Jusqu’à ${fmtN(tier.upTo as number)} FCFA`;
-  if (tier.upTo === null) return `Au-delà de ${fmtN(prev)} FCFA`;
-  return `De ${fmtN(prev + 1)} à ${fmtN(tier.upTo)} FCFA`;
-}
-
-/** Taux d'entrée et plancher, pour les textes (« de 10 % à 3 % »). */
-export const FEE_MAX_RATE = FEE_TIERS[0].rate;
-export const FEE_MIN_RATE = FEE_TIERS[FEE_TIERS.length - 1].rate;
+/**
+ * @deprecated Anciens noms de l'ex-grille progressive, conservés UNIQUEMENT pour que `src/lib/site-data.ts`
+ * (verrouillé par l'autre IA au moment de ce changement) continue de compiler. À supprimer dès que ses lignes
+ * « Cagnotte », « Billetterie » et les questions « Combien coûte Rallyo ? » / « Qui paie les frais de Rallyo ? »
+ * sont réécrites avec RALLYO_RATE, TOTAL_RATE_MIN et TOTAL_RATE_MAX. Voir JOURNAL du 2026-10-03.
+ */
+export const FEE_MAX_RATE = TOTAL_RATE_MAX;
+/** @deprecated voir FEE_MAX_RATE. */
+export const FEE_MIN_RATE = TOTAL_RATE_MIN;

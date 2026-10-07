@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { fmt } from "@/lib/data";
-import { computeFee, FEE_MAX_RATE, FEE_MIN_RATE } from "@/lib/fees";
+import { computeFee, DEFAULT_METHOD, fmtRate, PROVIDER_METHODS, RALLYO_RATE } from "@/lib/fees";
 
-/** Simulateur : commission exacte selon la grille dégressive (hors frais du prestataire Mobile Money). */
+/** Simulateur : frais = 5 % Rallyo + pourcentage FedaPay selon le moyen de paiement (cf. src/lib/fees.ts). */
 export function FeeCalculator() {
   const [raw, setRaw] = useState("250000");
+  const [methodId, setMethodId] = useState(DEFAULT_METHOD.id);
 
+  const method = PROVIDER_METHODS.find((m) => m.id === methodId) ?? DEFAULT_METHOD;
   const amount = Number(raw.replace(/\D/g, "")) || 0;
-  const r = computeFee(amount);
-  const rate = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(r.effectiveRate);
+  const r = computeFee(amount, method.rate);
 
   return (
     <div className="calc">
@@ -23,14 +24,27 @@ export function FeeCalculator() {
         placeholder="Ex : 250 000"
       />
 
+      <label htmlFor="calc-method" className="calc-label-2">Moyen de paiement de tes participants</label>
+      <select id="calc-method" value={methodId} onChange={(e) => setMethodId(e.target.value)}>
+        {PROVIDER_METHODS.map((m) => (
+          <option key={m.id} value={m.id}>
+            {m.label} ({fmtRate(m.rate)} %)
+          </option>
+        ))}
+      </select>
+
       <div className="calc-rows" aria-live="polite">
         <div className="calc-row">
-          <span>Commission Rallyo</span>
-          <b>{fmt(r.fee)}</b>
+          <span>Commission Rallyo ({fmtRate(RALLYO_RATE)} %)</span>
+          <b>{fmt(r.rallyoFee)}</b>
         </div>
         <div className="calc-row">
-          <span>Taux moyen réel</span>
-          <b>{amount ? `${rate} %` : `${FEE_MAX_RATE} %`}</b>
+          <span>Frais de paiement FedaPay ({fmtRate(method.rate)} %)</span>
+          <b>{fmt(r.providerFee)}</b>
+        </div>
+        <div className="calc-row">
+          <span>Total des frais ({fmtRate(r.totalRate)} %)</span>
+          <b>{fmt(r.fee)}</b>
         </div>
         <div className="calc-row total">
           <span>Tu reçois</span>
@@ -38,24 +52,10 @@ export function FeeCalculator() {
         </div>
       </div>
 
-      {r.slices.length > 1 && (
-        <details className="calc-detail">
-          <summary>Voir le détail par tranche</summary>
-          {r.slices.map((s) => (
-            <div className="calc-row" key={s.from}>
-              <span>
-                {fmt(s.amount)} à {s.rate} %
-              </span>
-              <b>{fmt(Math.round(s.fee))}</b>
-            </div>
-          ))}
-        </details>
-      )}
-
       <p className="note">
-        Le taux baisse par tranches, de {FEE_MAX_RATE} % à {FEE_MIN_RATE} % : chaque tranche est facturée à son propre taux,
-        donc plus tu collectes, plus ton taux moyen diminue. Estimation hors frais du prestataire de paiement Mobile Money,
-        qui varient selon l’opérateur. Les taux seront confirmés au lancement.
+        Les frais se résument à {fmtRate(RALLYO_RATE)} % pour Rallyo, plus le pourcentage du prestataire de paiement
+        (FedaPay) selon le moyen utilisé. Aucun autre frais : pas d’inscription, pas d’abonnement. Estimation hors frais
+        fixes de virement de tes fonds. Les pourcentages du prestataire seront confirmés au lancement.
       </p>
     </div>
   );

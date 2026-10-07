@@ -50,7 +50,7 @@ $1
 | Accueil (hero v2, galerie, simulateur) | `/` | ✅ | ⏳ |
 | Comment ça marche | `/comment-ca-marche` | ✅ ⚠️ texte à réécrire | ⏳ |
 | Pourquoi Rallyo | `/pourquoi-rallyo` | ✅ | ⏳ |
-| Tarifs | `/tarifs` | ✅ ⚠️ grille à confirmer | ⏳ |
+| Tarifs | `/tarifs` | ✅ simulateur et tableau « 5 % + FedaPay » ; ⚠️ cartes et FAQ de `site-data.ts` à mettre à jour | ⏳ |
 | Sécurité | `/securite` | ✅ ⚠️ texte à réécrire | ⏳ |
 | FAQ | `/faq` | ✅ ⚠️ texte à réécrire | ⏳ |
 | Contact et aide | `/contact` | ✅ | ⏳ |
@@ -98,11 +98,11 @@ $1
 - [ ] Copier l'URL du projet et la clé publique (Settings → API) dans `.env.local` — **jamais** la clé `service_role`
 - [ ] Définir `NEXT_PUBLIC_SITE_URL` (adresse publique du site) quand le domaine existe
 - [ ] Renseigner les coordonnées de contact (`NEXT_PUBLIC_CONTACT_EMAIL / WHATSAPP / PHONE / HOURS`)
-- [x] Grille de frais **tranchée : 10 % → 3 %**, en tranches progressives (un seul fichier : `src/lib/fees.ts`)
+- [x] ~~Grille de frais 10 % → 3 %~~ **remplacée le 2026-10-03** par **5 % + pourcentage FedaPay** (un seul fichier : `src/lib/fees.ts`)
 - [x] Prestataire de paiement : **FedaPay** (choisi par le porteur le 2026-10-03)
 - [ ] Créer un compte FedaPay et récupérer les **clés de test (sandbox)** — cahier des charges §20.6
 - [ ] Poser à FedaPay les questions du §20 (tarif des cartes, pays ouverts, remboursements, versements, montant minimum, signature du webhook) et **reconfirmer les tarifs**
-- [ ] Trancher le §20.3 : le coût FedaPay (jusqu'à 4 %) dépasse la commission Rallyo sur les grosses collectes (≈ 5 M F et plus) pour Coris, BMO et MTN Côte d'Ivoire
+- [x] Frais : **5 % + pourcentage FedaPay** décidé (CDC §6) — reste à confirmer que le total est **déduit de l'organisateur** (pas ajouté à l'acheteur), qui supporte les **frais fixes de versement** (150 à 2 500 F), et le **tarif des cartes bancaires**
 - [ ] Fournir le lien de **Ticketmania** (tarifs introuvables) pour compléter la comparaison
 - [ ] Faire le contrôle visuel de la landing avec `npm run dev` (ordinateur + mobile)
 - [ ] Répondre aux décisions ouvertes du cahier des charges (§16)
@@ -121,21 +121,23 @@ $1
 ### 📥 Demandes du porteur (registre — 2026-10-03)
 | # | Demande | Statut | Qui |
 |:-:|---|:-:|---|
-| 1 | **Frais : 5 % pour Rallyo + le pourcentage de FedaPay en plus, pour tout** (remplace la grille progressive 10 % → 3 %). *Hypothèse retenue faute de réponse : montant **déduit des recettes de l'organisateur** (décision du 2026-10-02), pas ajouté au prix payé par l'acheteur. À confirmer.* | 🔄 EN COURS | Claude |
-| 2 | **Appli : les champs sont trop espacés entre eux** | 🔄 EN COURS | Claude |
+| 1 | **Frais : 5 % pour Rallyo + le pourcentage de FedaPay en plus, pour tout** (remplace la grille progressive 10 % → 3 %). *Hypothèse retenue faute de réponse : montant **déduit des recettes de l'organisateur** (décision du 2026-10-02), pas ajouté au prix payé par l'acheteur. À confirmer.* | ✅ TERMINÉ sauf **4 textes de `src/lib/site-data.ts`** (verrou de l'autre IA) : cartes « Cagnotte » / « Billetterie » et 2 questions de FAQ, voir l'entrée du 2026-10-03 « Frais et espacement » | Claude |
+| 2 | **Appli : les champs sont trop espacés entre eux** | ✅ TERMINÉ (reste le contrôle visuel sur téléphone) | Claude |
 | 3 | **Terminer le travail de l'autre IA** : textes publics selon les règles de fonds (CDC §10), pages légales (mentions légales, CGU, confidentialité), `.gitattributes` | ⏳ à reprendre dès son ✅ ou sur ordre du porteur (un seul intervenant à la fois) | Claude (reprise) |
 | 4 | **Terminer le travail du prompt « pages de présentation »** (CDC §19) : d'abord les pages publiques avec données de démo (couverture, galerie, sections, aperçu, partage) ; l'éditeur et l'envoi de photos viendront avec l'authentification et le stockage d'images | ⏳ après le point 3 | Claude |
 | 5 | Prestataire de paiement : **FedaPay**, intégration « après » | ✅ consigné (CDC §20) ; intégration plus tard | — |
 | 6 | Ajouter les nouveautés au cahier des charges (pages de présentation, FedaPay) | ✅ fait | Claude |
 | 7 | Règle de travail : **notifier avant et après** chaque tâche, travailler **à tour de rôle** | ✅ en vigueur (section 0) | tous |
 | 8 | Base de données : **rester sur Supabase** (projet `my-portos`) | ✅ | — |
+| 9 | **Architecture « Rallyo Widget + API »** (le prompt du porteur demande **d'abord l'analyse et l'architecture, sans code** : widget JS intégrable sur un site tiers, API REST, webhooks, clés API, domaines autorisés, offres FREE / PRO / BUSINESS, sécurité, plan par étapes). Livrable : `docs/ARCHITECTURE_WIDGET_API.md` + renvois dans le cahier des charges. **Validation du porteur avant tout développement.** | ⏳ après les points 1 et 2 (document uniquement, aucun conflit avec l'autre IA) | Claude |
+| 10 | **Design de référence** (image mobile fournie le 2026-10-03) : thème sombre, boutons à dégradé rose → magenta, billet blanc à encoches avec code-barres, cartes d'évènement empilées, barre de navigation en pastille, grande couverture avec dégradé. À appliquer à l'appli et aux pages de présentation. *(Le fichier image reste chez le porteur : il est décrit dans le CDC §19.9.)* | ⏳ consigné ; application après les points 3 et 4 | Claude |
 
 ### 🔄 En cours
-- **🔄 EN COURS — Claude, demandes 1 et 2 (2026-10-03).** (1) Frais « 5 % + FedaPay » : `src/lib/fees.ts`, `src/components/site/fee-calculator.tsx`, page `/tarifs`, `docs/CAHIER_DES_CHARGES.md` (§6, §8, §18, §20.3), tests éventuels. **`src/lib/site-data.ts` est verrouillé par l'autre IA** : je ne l'édite pas ; les lignes de tarifs/FAQ qui y mentionnent des taux sont listées dans mon entrée de fin pour être corrigées par elle (ou par moi à la reprise du point 3). (2) Espacement des champs de l'appli : composants et formulaires sous `src/components/` et `src/app/app/` (liste exacte dans mon entrée de fin). **Aucune migration, aucun fichier de l'autre IA.**
 - **Contrôle visuel** (desktop + mobile) de l'ensemble de la landing : hero v2, galerie, icônes Lucide, simulateur de frais, page Contact — avec `npm run dev`. Personne ne l'a encore fait dans un navigateur (les vérifications faites jusqu'ici sont `tsc`, `build` et des requêtes HTTP).
 - **Landing page + pages vitrine** (étape 9 / 10 : build et vérifications)
 
 ### ✅ Fait
+- **✅ TERMINÉ (2026-10-03) — Demandes 1 et 2 : frais « 5 % + FedaPay » et espacement des champs de l'appli.** `src/lib/fees.ts` (nouveau modèle), simulateur avec choix du moyen de paiement, page `/tarifs`, CDC §6 / §7 / §8 / §18 / §20.3 ; `ui.tsx` (composant `Field`) et `create-view.tsx` (espacement). Reste : 4 textes dans `site-data.ts` et contrôle visuel. Voir l'entrée « Frais et espacement ».
 - **✅ TERMINÉ (2026-10-03) — Cahier des charges : pages de présentation (§19) et FedaPay (§20)**, plus mises à jour de §4, §8, §13.3, §13.7, §13.9, §17 et §18. Documentation uniquement : aucun code, aucune migration. Voir l'entrée chronologique du 2026-10-03 « Claude — Cahier des charges ».
 - **✅ TERMINÉ (2026-10-03) — Migrations Supabase adaptées au schéma `rallyo`** (reprise par Claude du travail inachevé de l'autre IA, sur décision du porteur). Approche : tables dans `rallyo` (non exposé), fonctions `SECURITY DEFINER` préfixées `rallyo_` dans `public`. **Contrôles :** syntaxe validée par l'analyseur officiel de PostgreSQL ; **37 tests réussis** sur un vrai PostgreSQL (tables inaccessibles à `anon` / `authenticated`, fonctions correctes, formulaire de contact protégé, RLS, `search_path`) ; `tsc` 0 erreur ; build 28 pages ; route `/api/contact` testée (400 / 413 / 429 / 503, robots ignorés). **Rien n'est appliqué sur Supabase** : c'est au porteur d'exécuter les migrations.
 - **✅ TERMINÉ — Choix du projet Supabase : `my-portos`** (ex-« Drop » abandonné). Projet actif, 0 utilisateur, aucune collision ; isolation par le schéma `rallyo`. (Détails des décisions et vérifications conservés dans le journal chronologique.)
@@ -210,6 +212,20 @@ Ordre **proposé** :
 ---
 
 ## 2. Journal chronologique (le plus récent en haut)
+
+### 2026-10-03 — Claude — Frais « 5 % + FedaPay » et espacement des champs (demandes 1 et 2)
+**Statut :** ✅ TERMINÉ (sauf 4 textes de `site-data.ts`, verrou de l'autre IA)
+**Fichiers touchés :** `src/lib/fees.ts` (réécrit), `src/components/site/fee-calculator.tsx` (réécrit), `src/app/(site)/tarifs/page.tsx`, `src/app/(site)/site.css` (style du menu déroulant), `src/components/ui.tsx` (composant `Field`), `src/components/views/create-view.tsx`, `docs/CAHIER_DES_CHARGES.md`, `docs/JOURNAL.md`. **Pas touchés :** `site-data.ts`, mentions légales, `legal.tsx`, migrations.
+**Description :**
+- **Frais :** nouveau modèle du porteur = **5 % Rallyo + pourcentage FedaPay selon le moyen de paiement**, pour tout (cagnottes et billetterie), sans palier. Abandonne la grille 10 % → 3 %. `fees.ts` expose `RALLYO_RATE`, `PROVIDER_METHODS` (1,8 % : MTN, Moov, Celtiis au Bénin ; 4 % : Coris, BMO, MTN Côte d'Ivoire), `computeFee(montant, tauxPrestataire)`. Totaux : **6,8 %** et **9 %**. Calcul vérifié dans la page générée : 250 000 F à 1,8 % → 12 500 + 4 500 = 17 000 F, il reste 233 000 F.
+- **Simulateur et page Tarifs :** choix du moyen de paiement, détail Rallyo / FedaPay / total / « Tu reçois » ; la grille par tranches est remplacée par un tableau « moyen de paiement → total ».
+- **Effet de bord positif :** la marge de Rallyo est toujours de 5 %, quel que soit le montant ou le moyen de paiement. Le problème de marge négative au-delà de 5,7 M F (CDC §20.3) disparaît.
+- **Espacement :** `Field` (champ texte / zone de texte) : marge label-champ 6 → 4 px et hauteur de champ réduite (`p-3.5` → `px-3.5 py-3`) ; formulaire de création : écart entre champs 16 → 12 px, bloc de couverture 128 → 112 px, interrupteur et bouton de publication resserrés. Le formulaire de connexion en profite via `Field` ; le paiement n'a pas de champ de texte.
+- **Cahier des charges :** §6 réécrit, §7 point 1, §8 (2 décisions), §18, §19.9 (design de référence), §20.3 (marqué résolu).
+- **Réparation de contenu perdu :** le cahier contenait **3 lignes `$1`** à la place de vrais textes (point 7 de §7 « Mentions légales, CGU, confidentialité », point 11 « Arbitrer le message d'accueil », et une puce de principes §9.1 sur les moyens de paiement). Même défaut de remplacement que déjà vu deux fois. **Textes retrouvés dans l'historique git et restaurés.**
+**Vérifications :** `tsc` 0 erreur ; build 29 pages ; HTML généré contrôlé (montants, nouvelles classes d'espacement). **Non fait :** contrôle visuel sur téléphone.
+**⚠️ Reste (verrou `site-data.ts`) — à appliquer par l'autre IA ou par moi à la reprise du point 3 :** `src/lib/site-data.ts` importe encore `FEE_MAX_RATE` et `FEE_MIN_RATE` (conservés dans `fees.ts` en `@deprecated` pour que le build passe). Quatre textes affichent encore l'ancien modèle « dégressif » : les cartes **Cagnotte** et **Billetterie** de `PRICING`, et les questions de FAQ **« Combien coûte Rallyo ? »** et **« Qui paie les frais de Rallyo ? »**. Texte à utiliser : « 5 % pour Rallyo, plus le pourcentage du prestataire de paiement (FedaPay) selon le moyen utilisé, de 6,8 % à 9 % au total. Pas d'inscription payante, pas d'abonnement. Les frais sont déduits des recettes de l'organisateur. » Une fois fait : supprimer `FEE_MAX_RATE` et `FEE_MIN_RATE` de `fees.ts`.
+**Observation :** une ligne `$1` subsiste aussi dans l'**index des fichiers critiques** de ce journal (section 0), à la place d'une ligne de tableau, probablement dans un édit de l'autre IA. Je ne sais pas quelle ligne manque : à restaurer par son auteur.
 
 ### 2026-10-03 — Claude — Cahier des charges : pages de présentation et FedaPay
 **Statut :** ✅ TERMINÉ

@@ -320,6 +320,9 @@ html:has(.site){scroll-behavior:smooth;}
 .calc label{display:block;font-family:var(--font-jetbrains),monospace;font-size:.75rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
 .calc input{width:100%;background:#0a0a0f;border:2px solid rgba(255,255,255,.2);border-radius:14px;padding:16px 18px;color:var(--paper);font-size:1.3rem;font-family:var(--font-jetbrains),monospace;outline:none;}
 .calc input:focus{border-color:var(--pink);}
+.calc .calc-label-2{margin-top:18px;}
+.calc select{width:100%;background:#0a0a0f;border:2px solid rgba(255,255,255,.2);border-radius:14px;padding:14px 16px;color:var(--paper);font-size:.95rem;font-family:inherit;outline:none;cursor:pointer;}
+.calc select:focus{border-color:var(--pink);}
 .calc-rows{margin-top:24px;}
 .calc-row{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid rgba(255,255,255,.08);font-size:.95rem;}
 .calc-row b{font-family:var(--font-jetbrains),monospace;color:var(--acid);text-align:right;}

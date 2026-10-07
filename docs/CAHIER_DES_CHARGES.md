@@ -88,33 +88,30 @@ Règles : versions exactes (`save-exact`), pas de Turbopack en build, pas de bib
 `profiles` → `campaigns` → `contributions` ; `profiles` → `events` → `tickets`.
 Montants en **entiers FCFA**. Sécurité par **Row Level Security** ; paiements et émission de billets uniquement côté serveur.
 
-## 6. Modèle économique (à confirmer)
+## 6. Modèle économique (décision du porteur, 2026-10-03)
 
-Commission à l'usage, inscription gratuite :
-- **Grille dégressive en tranches progressives**, identique pour cagnottes et billetterie (source unique : `src/lib/fees.ts`). Chaque tranche est facturée à son propre taux :
-  - jusqu'à 100 000 FCFA : **10 %**
-  - de 100 001 à 500 000 : **8 %**
-  - de 500 001 à 1 000 000 : **6 %**
-  - de 1 000 001 à 2 500 000 : **4 %**
-  - au-delà de 2 500 000 : **3 %**
-- Taux moyen réel : 10 % à 100 000 FCFA, 8,4 % à 500 000, 7,2 % à 1 M, 5,3 % à 2,5 M, 4,1 % à 5 M, 3,6 % à 10 M (il tend vers 3 % sans l'atteindre)
-- Frais du prestataire Mobile Money en sus
-- Piste future : abonnement « Pro » pour organisateurs réguliers (commission réduite)
+Inscription gratuite, pas d'abonnement, **aucun palier** :
+- **Frais total = 5 % (Rallyo) + pourcentage du prestataire de paiement (FedaPay) selon le moyen de paiement.** Rien d'autre. Identique pour les cagnottes et la billetterie. Source unique : `src/lib/fees.ts`.
+- Pourcentages FedaPay retenus (publiés par FedaPay le 2026-10-03, **à reconfirmer**) : **1,8 %** (Mobile Money Bénin : MTN, Moov, Celtiis) → total **6,8 %** ; **4 %** (Coris Money, BMO, MTN Côte d'Ivoire) → total **9 %**. Cartes bancaires : tarif non trouvé, non proposé pour l'instant.
+- **Hypothèse à confirmer :** le total est **déduit des recettes de l'organisateur** (décision du 2026-10-02), jamais ajouté au prix payé par l'acheteur.
+- Non inclus dans le calcul : les frais fixes de versement FedaPay (150 à 2 500 F par virement vers Mobile Money, §20.2).
+- Cette règle **remplace** l'ancienne grille progressive de 10 % à 3 %, qui est abandonnée.
+- Offres futures (FREE / PRO / BUSINESS, commission réduite, limites d'API) : à étudier avec l'architecture « Widget + API » (voir `docs/ARCHITECTURE_WIDGET_API.md`, à venir).
 
 ## 7. Points à valider avant mise en ligne
 
 Ces affirmations apparaissent dans la landing et la FAQ : elles doivent correspondre à la réalité.
-1. Grille de frais : taux de 10 % et 3 % fixés par le porteur du projet ; **seuils et taux intermédiaires (8 / 6 / 4 %) proposés, à valider**. Vérifier aussi que 3 % couvre les frais du prestataire Mobile Money. Comparer avec la concurrence (chiffres Tikerama : 10 % billets, 5 % cotisations — non vérifiés).
+1. Frais : **5 % + pourcentage FedaPay** (§6). Vérifier les pourcentages de FedaPay et le tarif des cartes ; confirmer que le total est déduit de l'organisateur. Comparer avec la concurrence (Tikerama : 10 % billets, 5 % cotisations, vérifiés sur leur site le 2026-10-02). **Textes encore à mettre à jour dans `src/lib/site-data.ts`** (cartes Tarifs et FAQ « Combien coûte Rallyo ? », « Qui paie les frais de Rallyo ? »).
 2. Règles de fonds (§10) : fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé. **À trancher :** dépassement de l'objectif, plafond et justificatifs du retrait anticipé, date du versement différé en billetterie.
 3. Délai de retrait annoncé et vérification d'identité des organisateurs.
 4. Liste des moyens de paiement réellement disponibles par pays.
 5. Pays de lancement (Bénin d'abord ?).
 6. Remplacer les images de démonstration (Unsplash) par des visuels libres de droits ou propres.
-$1
+7. Mentions légales, CGU et politique de confidentialité (non rédigées).
 8. **Prestataire de paiement agréé par pays** et cadre réglementaire BCEAO / UMOA : à vérifier (§17). Les éléments du document source n'ont pas été vérifiés.
 9. **Réécrire les textes publics** (FAQ « objectif non atteint » et « retirer mes fonds », `/securite`, `/comment-ca-marche`) : ils décrivent aujourd'hui un retrait libre, incompatible avec les fonds réservés du §10.
 10. **Tranché :** la commission est déduite des recettes de l'organisateur (§16). **Reste à préciser :** qui supporte les frais du prestataire Mobile Money.
-$1
+11. Arbitrer le **message d'accueil** (« Les moments commencent ici. » ou « Rassemble. Célèbre. Soutiens. ») et la **direction visuelle** (§16).
 12. **Protection des données des pièces d'identité** des organisateurs (§10.9) : stockage, durée de conservation, consentement, cadre légal du pays de lancement.
 
 ## 8. Décisions prises
@@ -130,7 +127,8 @@ $1
 | 2026-10-02 | Hero repris de `rallyo-pw@` (texte + pop-ups à droite) ; vitrine « Ça se passe chez nous » = cartes-billets branchées au back, 13 max, tri par popularité, repli sur photos |
 | 2026-10-02 | Popularité calculée **côté base** (fonction SQL `SECURITY DEFINER`, agrégats uniquement) : les billets restent illisibles publiquement |
 | 2026-10-02 | Pages de détail et paiement : données de démo d'abord (`c1`, `e1`…), puis Supabase pour les UUID, via `src/lib/repo.ts` (mêmes types, vues inchangées) ; lecture publique par fonctions SQL `campaign_public` / `event_public` (migration `0003`) |
-| 2026-10-02 | Frais : grille dégressive de 10 % à 3 %, en **tranches progressives** (la commission ne baisse jamais quand le montant monte), même grille cagnotte et billetterie |
+| 2026-10-02 | Frais : grille dégressive de 10 % à 3 %, en **tranches progressives** (la commission ne baisse jamais quand le montant monte), même grille cagnotte et billetterie. ⚠️ **Remplacée le 2026-10-03** (ligne suivante) |
+| 2026-10-03 | ✅ **Frais : 5 % pour Rallyo + pourcentage FedaPay selon le moyen de paiement, pour tout** (cagnottes et billetterie), sans palier ni autre frais. Remplace la grille de 10 % à 3 %. Hypothèse : total déduit des recettes de l'organisateur (§6) |
 | 2026-10-02 | Spécifications V1 intégrées (§9 à 18) à partir des documents « Architecture complète » et « Architecture définitive V1 » |
 | 2026-10-02 | ✅ Plateforme **web responsive** ; achat et contribution **sans compte**, compte requis pour créer, gérer et retirer |
 | 2026-10-02 | ✅ **Pas de portefeuille Rallyo** : fonds versés via un prestataire de paiement agréé |
@@ -139,7 +137,7 @@ $1
 | 2026-10-02 | ✅ **Frais supportés par l'organisateur** (commission déduite de ses recettes) |
 | 2026-10-02 | ✅ **Cagnotte sous l'objectif à la date de fin : le créateur garde tout ce qui a été collecté** |
 | 2026-10-02 | ✅ **Organisateur d'évènement : toute personne avec un compte**, qui enregistre **identité + moyen de recevoir l'argent** (carte bancaire ou compte Mobile Money), enregistré chez le prestataire (§10.9) |
-| 2026-10-03 | ✅ **Prestataire de paiement : FedaPay** (choix du porteur ; intégration à faire plus tard, après l'authentification et le schéma V1). Voir §20 : **le coût FedaPay est supérieur au palier de commission le plus bas pour certains moyens de paiement, point à trancher** |
+| 2026-10-03 | ✅ **Prestataire de paiement : FedaPay** (choix du porteur ; intégration à faire plus tard, après l'authentification et le schéma V1). Voir §20 : le coût FedaPay est répercuté dans le modèle « 5 % + FedaPay » (§6), donc la marge de Rallyo ne dépend plus du moyen de paiement |
 | 2026-10-03 | ✅ **Chaque évènement et chaque cagnotte a une page de présentation publique et partageable** (couverture, galerie, sections, bouton d'action), personnalisable simplement par son créateur. Voir §19 |
 
 
@@ -157,7 +155,7 @@ $1
 - ✅ Plateforme **web responsive** (ordinateur, tablette, mobile). ⚠️ Le code actuel est une PWA dans un cadre de téléphone : voir §18.
 - ✅ **Transparence publique** : chaque évènement et chaque cagnotte a une page publique avec objectif, montant collecté ou encaissé, nombre de contributions ou de billets vendus, dates et statut.
 - ✅ **Achat et contribution sans compte.** Compte obligatoire pour créer, gérer, demander un retrait, consulter son historique et publier des mises à jour.
-$1
+- ✅ Paiement par **Mobile Money et cartes bancaires** (moyens disponibles selon le pays et le prestataire).
 - ✅ **Frais : l'organisateur les supporte** (décision du 2026-10-02) : la commission Rallyo est **déduite de ses recettes**, jamais ajoutée au prix payé par l'acheteur ou le contributeur. ❓ Reste à préciser qui supporte les frais du prestataire Mobile Money.
 - ✅ **Pas de portefeuille Rallyo** : les fonds sont versés au bénéficiaire via un **prestataire de paiement agréé** (§10.1, §17).
 - 🟡 Direction visuelle **festive et colorée** (message d'accueil « Les moments commencent ici. », visuel très festif) : à confirmer (§16).
@@ -417,7 +415,7 @@ Les huit questions du document, avec l'état de chaque réponse d'après les cho
 | **Back-office** | Aucun | 18 écrans (utilisateurs, paiements, retraits, signalements, modération) | Module d'administration protégé |
 | **Écrans** | 9 routes (accueil, explorer, créer, billets, profil, 2 détails, paiement, connexion) | 119 écrans et sous-écrans (§12) | Découpage en lots, voir le journal |
 | **Textes publics** | FAQ « Que se passe-t-il si l'objectif n'est pas atteint ? » et « Comment retirer mes fonds ? » décrivent un retrait libre | Fonds réservés jusqu'à la fin ou à l'objectif, retrait anticipé contrôlé | **Réécrire la FAQ, `/securite` et `/comment-ca-marche`** une fois les règles du §10 validées |
-| **Frais** | Commission déduite de l'organisateur | Exemple d'achat avec frais ajoutés à l'acheteur | **Tranché : on garde la commission déduite de l'organisateur.** Exemple du document écarté (§13.4). Aucun changement de `fees.ts` |
+| **Frais** | Commission déduite de l'organisateur | Exemple d'achat avec frais ajoutés à l'acheteur | **Tranché : on garde la commission déduite de l'organisateur.** Exemple du document écarté (§13.4). Le modèle de frais lui-même a ensuite changé le 2026-10-03 : **5 % + pourcentage FedaPay** (§6) |
 | **Slogan / hero** | « Rassemble. Célèbre. Soutiens. » | « Les moments commencent ici. » (proposé) | Arbitrage §16 |
 | **Pages de présentation** | Pages de détail simples (image, texte, bouton), non personnalisables, dans le cadre téléphone de `/app` | Page publique partageable par évènement / cagnotte : couverture, galerie, sections, aperçu, publication (§19) | Tables de présentation et de médias, stockage d'images, éditeur simple, pages publiques hors du cadre `/app`. **Dépend de l'authentification** |
 | **Paiement** | Simulé (`/app/paiement`) | FedaPay : transaction, paiement Mobile Money, webhook, versements (§20) | Routes serveur, webhook idempotent, table des commandes, statuts réels du prestataire. **Dépend de l'authentification, du schéma V1 et d'une URL publique** |
@@ -479,6 +477,15 @@ PresentationPage ── Évènement  (billets, date, lieu)
 ### 19.8 Qualité attendue
 Mobile d'abord (tablette et ordinateur soignés) · images paresseuses avec texte alternatif · animations légères qui respectent « réduire les animations » · pas de nouvelle dépendance lourde · design cohérent avec l'existant, avec comme **référence d'ambiance** l'image mobile fournie par le porteur (composition, cartes, boutons, rapport image / information) **sans la copier**.
 
+### 19.9 Design de référence (image fournie par le porteur le 2026-10-03)
+> Le fichier image est conservé par le porteur (non stocké dans le dépôt). Description fidèle de ce que montre la référence, pour que l'équipe puisse s'en servir. **À utiliser comme direction d'ambiance, pas à copier** ; couleurs et typographies restent celles de Rallyo.
+- **Ambiance générale :** thème **sombre**, boutons principaux en **dégradé rose vif → magenta**, accents rose sur fond noir, grandes photos d'ambiance (concert, foule, lumières violettes), coins très arrondis.
+- **Écran d'accueil :** en-tête avec localisation et photo de profil ; **barre de recherche** arrondie avec icône de filtres ; section « Évènements près de toi » avec lien « Tout voir » ; **carte d'évènement blanche** : photo, pastille de date en haut à droite, titre, lieu, **prix par personne**, gros bouton « Réserver » en dégradé ; **cartes empilées** derrière pour suggérer d'autres évènements ; rangée « À venir » ; **barre de navigation basse en pastille sombre** avec cinq icônes (accueil actif dans un rond clair).
+- **Écran de détail :** photo **plein cadre** qui se fond dans le noir par un dégradé ; titre, **étiquette de catégorie** et « N personnes y vont → » ; lignes d'information avec **icône dans un rond rose sombre** (date et horaires avec bouton « Ajouter à mon calendrier », lieu avec bouton « Voir sur la carte », organisateur) ; **bouton d'action fixe en bas** en dégradé.
+- **Écran de billet :** fond noir, en-tête « Billet » avec retour et cloche ; **billet blanc à encoches rondes** sur les côtés, avec photo, titre, lieu, nom du porteur, place, date, heure et **code-barres** ; bouton « Télécharger le billet » en dégradé.
+- **Adaptations Rallyo :** montants en **FCFA** ; **QR code** à la place du code-barres (le contrôle d'entrée est prévu en QR) ; textes en français ; **cagnotte** : même composition avec jauge de progression à la place du prix et bouton « Contribuer » ; cohérence avec la palette actuelle (violet, rose, cyan) et le thème sombre déjà en place dans `/app`.
+- **Application :** appli (`/app`) et pages de présentation publiques (§19.1 à 19.8), après la reprise des textes publics. Les cartes-billets de la galerie de l'accueil et l'écran « Mes billets » ont déjà un esprit proche (billet à encoches).
+
 ## 20. Paiement avec FedaPay
 
 > **Statut : prestataire choisi par le porteur (2026-10-03). Intégration à faire plus tard**, après l'authentification, le schéma V1 (commandes, retraits) et la mise en ligne d'une URL publique (nécessaire au webhook). **Aucun code de paiement n'existe**; `/app/paiement` reste simulé.
@@ -501,8 +508,8 @@ Mobile d'abord (tablette et ordinateur soignés) · images paresseuses avec text
 
 **Versements vers un compte Mobile Money (frais fixes par virement) :** 0 à 10 000 F : 150 F · 10 001 à 50 000 : 300 F · 50 001 à 150 000 : 800 F · 150 001 à 500 000 : 2 000 F · plus de 500 000 : 2 500 F. Des frais supplémentaires peuvent s'ajouter entre réseaux différents.
 
-### 20.3 Conséquence sur nos taux : point à trancher ⚠️
-La commission Rallyo (`src/lib/fees.ts`, tranches progressives de 10 % à 3 %) doit couvrir le coût FedaPay. Le **taux réellement payé** par l'organisateur dépend du montant :
+### 20.3 Conséquence sur nos taux : ✅ résolu par le modèle « 5 % + FedaPay » (2026-10-03)
+La commission Rallyo (**ancienne** grille de `src/lib/fees.ts`, tranches progressives de 10 % à 3 %, abandonnée le 2026-10-03) devait couvrir le coût FedaPay. Voici l'analyse qui a motivé le changement : le **taux réellement payé** par l'organisateur dépendait du montant :
 
 | Montant collecté | Taux Rallyo réel | Marge si FedaPay à 1,8 % | Marge si FedaPay à 4 % |
 |---|---|---|---|
@@ -513,11 +520,13 @@ La commission Rallyo (`src/lib/fees.ts`, tranches progressives de 10 % à 3 %) d
 | 5 000 000 F | 4,14 % | 2,3 pts | **0,14 pt** |
 | au-delà d'environ 5,7 M F | < 4 % | positive | **négative** |
 
-*(Calcul à partir de la grille actuelle, avant frais de versement et autres coûts.)*
-- Avec les moyens à 1,8 % (Bénin : MTN, Moov, Celtiis), la marge reste confortable partout.
-- Avec les moyens à 4 % (Coris, BMO, MTN Côte d'Ivoire), **la marge disparaît sur les grosses collectes** (≈ 5 M F), et devient négative au-delà.
+*(Calcul à partir de l'ancienne grille, avant frais de versement et autres coûts.)*
+- Avec les moyens à 1,8 % (Bénin : MTN, Moov, Celtiis), la marge restait confortable partout.
+- Avec les moyens à 4 % (Coris, BMO, MTN Côte d'Ivoire), **la marge disparaissait sur les grosses collectes** (≈ 5 M F), et devenait négative au-delà.
 - Les **frais fixes de versement** (150 à 2 500 F par virement) pèsent sur les petits retraits répétés (150 F sur 10 000 F = 1,5 %).
-- ❓ **Décisions à prendre :** (a) Rallyo absorbe le coût FedaPay dans sa commission ; (b) les moyens à 4 % sont proposés ou non au lancement, ou avec un taux plancher plus élevé ; (c) qui supporte les frais de versement. L'option « frais à la charge du client » est possible chez FedaPay mais **contredit la décision du 2026-10-02** (commission jamais ajoutée à l'acheteur).
+
+**✅ Résolu le 2026-10-03 :** le porteur a remplacé la grille par **5 % + pourcentage FedaPay** (§6). Le coût du prestataire est répercuté, donc **la marge de Rallyo est toujours de 5 %, quel que soit le moyen de paiement ou le montant**. Le tableau ci-dessus est conservé comme historique.
+- ❓ **Reste ouvert :** (c) qui supporte les **frais fixes de versement** (150 à 2 500 F par virement) ; le **tarif des cartes bancaires** ; et la confirmation que le total est **déduit de l'organisateur** (l'option « frais à la charge du client » existe chez FedaPay mais contredit la décision du 2026-10-02).
 
 ### 20.4 Conséquences sur le produit
 - **Délais :** le reversement prend jusqu'à 3 jours ouvrés : les statuts « réservé », « en vérification », « versé » (§10.7, §17) et les délais annoncés aux organisateurs doivent s'aligner sur la réalité du prestataire.

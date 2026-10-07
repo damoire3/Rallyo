@@ -52,10 +52,10 @@ export function CreateView() {
         ))}
       </div>
 
-      <div className="mt-5 flex flex-col gap-4">
+      <div className="mt-4 flex flex-col gap-3">
         <button
           type="button"
-          className="flex h-32 w-full flex-col items-center justify-center gap-1.5 rounded-2xl border-[1.5px] border-dashed border-faint bg-card"
+          className="flex h-28 w-full flex-col items-center justify-center gap-1.5 rounded-2xl border-[1.5px] border-dashed border-faint bg-card"
         >
           <Icon name="camera" size={22} color="#918DA3" />
           <span className="text-[12px] text-muted">Ajouter une image de couverture</span>
@@ -86,7 +86,7 @@ export function CreateView() {
         />
 
         {isCagnotte && (
-          <div className="flex items-center justify-between rounded-2xl bg-card p-4">
+          <div className="flex items-center justify-between rounded-2xl bg-card px-4 py-3">
             <div>
               <p className="text-[13px] font-semibold text-white">Autoriser les dons anonymes</p>
               <p className="text-[11px] text-muted">Uniquement pour les cagnottes</p>
@@ -107,7 +107,7 @@ export function CreateView() {
 
       <button
         onClick={() => setDone(true)}
-        className="bg-brand mb-6 mt-7 w-full rounded-2xl py-4 text-[14px] font-bold text-bg"
+        className="bg-brand mb-6 mt-5 w-full rounded-2xl py-3.5 text-[14px] font-bold text-bg"
       >
         Publier sur Rallyo
       </button>
