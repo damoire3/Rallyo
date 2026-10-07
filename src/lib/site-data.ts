@@ -1,4 +1,4 @@
-import { FEE_MAX_RATE, FEE_MIN_RATE } from "./fees";
+import { PROVIDER_METHODS, RALLYO_RATE, fmtRate } from "./fees";
 
 const u = (id: string, w: number) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -141,9 +141,13 @@ export const PROBLEMS = [
   { icon: "globe", title: "Des outils pensés ailleurs", text: "Frais en devises, paiement par carte uniquement, interface sans les habitudes locales." },
 ];
 
+const PAY_MIN = Math.min(...PROVIDER_METHODS.map((m) => m.rate));
+const PAY_MAX = Math.max(...PROVIDER_METHODS.map((m) => m.rate));
+const PAY_LINE = "Frais de paiement en plus : " + fmtRate(PAY_MIN) + " % à " + fmtRate(PAY_MAX) + " % selon le moyen utilisé";
+
 export const PRICING = [
-  { label: "Cagnotte", amount: FEE_MAX_RATE + " → " + FEE_MIN_RATE + " %", small: "dégressif", items: ["Plus tu collectes, plus le taux baisse", "Aucun frais fixe, aucun frais d’inscription", "Frais du prestataire Mobile Money en sus"], highlight: false, soon: false },
-  { label: "Billetterie", amount: FEE_MAX_RATE + " → " + FEE_MIN_RATE + " %", small: "dégressif", items: ["Inclut e-billets QR et contrôle d’accès", "Même grille dégressive que les cagnottes", "Frais du prestataire Mobile Money en sus"], highlight: true, soon: false },
+  { label: "Cagnotte", amount: RALLYO_RATE + " %", small: "+ frais de paiement", items: ["Commission Rallyo unique, sans palier", PAY_LINE, "Aucun frais d’inscription, aucun abonnement"], highlight: false, soon: false },
+  { label: "Billetterie", amount: RALLYO_RATE + " %", small: "+ frais de paiement", items: ["Inclut e-billets QR et contrôle d’accès", "Même commission que les cagnottes, sans palier", PAY_LINE], highlight: true, soon: false },
   { label: "Rallyo Pro", amount: "Bientôt", small: "abonnement", items: ["Pour les organisateurs réguliers", "Commission réduite et statistiques avancées", "Tarif communiqué au lancement"], highlight: false, soon: true },
 ];
 
@@ -182,8 +186,8 @@ export const FAQ: FaqGroup[] = [
     category: "Paiements et frais",
     items: [
       { q: "Quels moyens de paiement sont acceptés ?", a: "Le Mobile Money (MTN, Moov, Celtiis, Orange Money, Wave selon ton pays) et la carte bancaire. La liste exacte dépend de ton pays et s’élargit au fil du lancement." },
-      { q: "Combien coûte Rallyo ?", a: "L’inscription est gratuite. Rallyo prélève une commission uniquement sur ce que tu collectes, avec un taux dégressif : " + FEE_MAX_RATE + " % sur les premières tranches, jusqu’à " + FEE_MIN_RATE + " % sur les grosses collectes. Les frais du prestataire de paiement s’ajoutent. Détails et simulateur sur la page Tarifs." },
-      { q: "Qui paie les frais de Rallyo ?", a: "L’organisateur : la commission Rallyo est déduite de ses recettes. L’acheteur ou le contributeur paie le montant affiché, sans frais Rallyo ajoutés. Les éventuels frais du prestataire de paiement dépendent du moyen choisi." },
+      { q: "Combien coûte Rallyo ?", a: "L’inscription est gratuite, sans abonnement. Rallyo prélève une commission de " + RALLYO_RATE + " % sur ce que tu collectes, pour les cagnottes comme pour la billetterie, sans palier. Les frais du prestataire de paiement s’ajoutent et dépendent du moyen utilisé. Détails et simulateur sur la page Tarifs." },
+      { q: "Qui paie les frais de Rallyo ?", a: "L’organisateur : la commission Rallyo et les frais du prestataire de paiement sont déduits de ses recettes. L’acheteur ou le contributeur paie le montant affiché, sans frais ajoutés." },
       { q: "Comment retirer mes fonds ?", a: "Les fonds sont versés via notre prestataire de paiement, vers le moyen de réception que tu as enregistré (carte bancaire ou compte Mobile Money), une fois ton identité vérifiée. Pour une cagnotte, tu peux aussi demander un retrait anticipé : la demande est vérifiée, approuvée, puis versée, et tu suis chaque étape dans ton espace. Les fonds ne sont pas conservés sur un portefeuille Rallyo." },
     ],
   },

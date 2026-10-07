@@ -29,6 +29,14 @@ const COLS = [
       { href: "/faq", label: "Questions fréquentes" },
     ],
   },
+  {
+    title: "Légal",
+    links: [
+      { href: "/mentions-legales", label: "Mentions légales" },
+      { href: "/conditions", label: "Conditions d’utilisation" },
+      { href: "/confidentialite", label: "Confidentialité" },
+    ],
+  },
 ];
 
 export function SiteFooter() {
